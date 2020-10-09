@@ -174,6 +174,7 @@ func (p *Parser) Decode(payload *pb.Payload, decoded *pb.Flow) error {
 	decoded.Time = payload.Time
 	decoded.Verdict = decodeVerdict(dn, tn, pvn)
 	decoded.DropReason = decodeDropReason(dn, pvn)
+	decoded.DropReasonDesc = pb.DropReason(decoded.DropReason)
 	decoded.Ethernet = ether
 	decoded.IP = ip
 	decoded.L4 = l4
