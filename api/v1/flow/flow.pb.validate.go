@@ -159,6 +159,8 @@ func (m *Flow) Validate() error {
 
 	// no validation rules for TraceObservationPoint
 
+	// no validation rules for DropReasonDesc
+
 	// no validation rules for Summary
 
 	return nil
