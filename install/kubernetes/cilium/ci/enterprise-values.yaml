@@ -1,0 +1,5 @@
+global:
+  registry: quay.io/isovalent
+  tag: "v1.8.4-cee.1"
+operator:
+  image: "docker.io/cilium/operator-generic:v1.8.4"

@@ -23,14 +23,15 @@ EXPERIMENTAL_OPTIONS := \
     --set global.hubble.metrics.enabled="{dns,drop,tcp,flow,port-distribution,icmp,http}" \
     --set global.hubble.relay.enabled=true \
     --set global.hubble.ui.enabled=true
+OSS_VERSION := $(shell echo $(VERSION) | cut -d '-' -f 1)
 
 all: update-versions $(QUICK_INSTALL) $(EXPERIMENTAL_INSTALL)
 
 $(QUICK_INSTALL): $(shell find cilium/ -type f)
-	$(QUIET)helm template cilium --namespace=kube-system $(OPTS) > $(QUICK_INSTALL)
+	$(QUIET)helm template cilium --namespace=kube-system $(OPTS) -f ./cilium/ci/enterprise-values.yaml > $(QUICK_INSTALL)
 
 $(EXPERIMENTAL_INSTALL): $(shell find cilium/ -type f)
-	$(QUIET)helm template cilium --namespace=kube-system $(EXPERIMENTAL_OPTIONS) > $(EXPERIMENTAL_INSTALL)
+	$(QUIET)helm template cilium --namespace=kube-system $(EXPERIMENTAL_OPTIONS) -f ./cilium/ci/enterprise-values.yaml > $(EXPERIMENTAL_INSTALL)
 
 update-versions:
 	$(ECHO_GEN) " -> Updating version to $(VERSION)"
@@ -51,6 +52,11 @@ update-versions:
 		fi; done
 	@# Fix up the managed etcd version, as that has its own scheme
 	$(QUIET)sed -i 's/'$(VERSION)'/'$(MANAGED_ETCD_VERSION)'/' $(MANAGED_ETCD_PATH)
+
+	# Generate a custom values file for chart testing and {experimental,quick}-install.yaml.
+	# https://github.com/helm/chart-testing/blob/master/doc/ct_install.md
+	# https://github.com/helm/charts/blob/master/test/README.md#providing-custom-test-values
+	$(QUIET)ENTERPRISE_TAG=v$(VERSION) OSS_TAG=v$(OSS_VERSION) envsubst < cilium/ci/enterprise-values.yaml.tmpl > cilium/ci/enterprise-values.yaml
 
 clean:
 	$(RM) $(QUICK_INSTALL) $(EXPERIMENTAL_INSTALL)
