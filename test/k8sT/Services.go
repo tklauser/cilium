@@ -1921,25 +1921,21 @@ Secondary Interface %s :: IPv4: (%s, %s), IPv6: (%s, %s)`, helpers.DualStackSupp
 				deploymentManager.Deploy(helpers.CiliumNamespace, IPSecSecret)
 				DeployCiliumOptionsAndDNS(kubectl, ciliumFilename, map[string]string{
 					"encryption.enabled": "true",
-					// When kube-proxy is enabled, the host firewall is not
-					// compatible with externalTrafficPolicy=Local because traffic
-					// from pods to remote nodes goes through the tunnel.
-					// This issue is tracked at #12542.
-					"hostFirewall": "false",
 				})
 				testExternalTrafficPolicyLocal()
 				deploymentManager.DeleteAll()
 				deploymentManager.DeleteCilium()
 			})
 
-			It("with externalTrafficPolicy=Local", func() {
+			It("with the host firewall and externalTrafficPolicy=Local", func() {
 				DeployCiliumOptionsAndDNS(kubectl, ciliumFilename, map[string]string{
-					// When kube-proxy is enabled, the host firewall is not
-					// compatible with externalTrafficPolicy=Local because traffic
-					// from pods to remote nodes goes through the tunnel.
-					// This issue is tracked at #12542.
-					"hostFirewall": "false",
+					"hostFirewall": "true",
 				})
+				testExternalTrafficPolicyLocal()
+			})
+
+			It("with externalTrafficPolicy=Local", func() {
+				DeployCiliumAndDNS(kubectl, ciliumFilename)
 				testExternalTrafficPolicyLocal()
 			})
 
