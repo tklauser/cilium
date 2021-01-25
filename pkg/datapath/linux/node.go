@@ -562,11 +562,11 @@ func (n *linuxNodeHandler) getSrcAndNextHopIPv4(nodeIPv4 net.IP, ifaceName strin
 	// Figure out whether nodeIPv4 is directly reachable (i.e. in the same L2)
 	routes, err := netlink.RouteGet(nodeIPv4)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to retrieve route for remote node IP: %w", err)
+		return nil, nil, fmt.Errorf("Failed to retrieve route for remote node IP: %w", err)
 	}
 
 	if len(routes) == 0 {
-		return nil, nil, fmt.Errorf("remote node IP is non-routable")
+		return nil, nil, fmt.Errorf("Remote node IP is not routable. Connectivity to pods on that node may be unavailable.")
 	}
 
 	// Use the first available route by default
@@ -608,18 +608,15 @@ func (n *linuxNodeHandler) insertNeighbor(ctx context.Context, newNode *nodeType
 	copy(nextHopIPv4, newNodeIP)
 
 	scopedLog := log.WithFields(logrus.Fields{
-		logfields.LogSubsys: "node-neigh",
 		logfields.Interface: ifaceName,
-		logfields.IPAddr:    newNodeIP,
+		logfields.IPAddr:    nextHopIPv4,
 	})
 
 	srcIPv4, nextHopIPv4, err := n.getSrcAndNextHopIPv4(nextHopIPv4, ifaceName)
 	if err != nil {
-		scopedLog.WithError(err).Error("Failed to determine source and nexthop IP addr")
+		scopedLog.WithError(err).Error("Failed to determine source and next hop ip for arping")
 		return
 	}
-
-	scopedLog = scopedLog.WithField(logfields.IPAddr, nextHopIPv4)
 
 	nextHopStr := nextHopIPv4.String()
 	if existingNextHopStr, found := n.neighNextHopByNode[newNode.Identity()]; found {
@@ -638,7 +635,7 @@ func (n *linuxNodeHandler) insertNeighbor(ctx context.Context, newNode *nodeType
 			neigh, found := n.neighByNextHop[existingNextHopStr]
 			if found {
 				if err := netlink.NeighDel(neigh); err != nil {
-					scopedLog.WithFields(logrus.Fields{
+					log.WithFields(logrus.Fields{
 						logfields.IPAddr:       neigh.IP,
 						logfields.HardwareAddr: neigh.HardwareAddr,
 						logfields.LinkIndex:    neigh.LinkIndex,
@@ -681,6 +678,15 @@ func (n *linuxNodeHandler) insertNeighbor(ctx context.Context, newNode *nodeType
 			return
 		}
 
+		if option.Config.NodePortHairpin {
+			defer func() {
+				// Remove nextHopIPv4 entry in the neigh BPF map. Otherwise,
+				// we risk to silently blackhole packets instead of emitting
+				// DROP_NO_FIB if the netlink.NeighSet() below fails.
+				neighborsmap.NeighRetire(nextHopIPv4)
+			}()
+		}
+
 		scopedLog = scopedLog.WithField(logfields.HardwareAddr, hwAddr)
 
 		neigh := netlink.Neigh{
@@ -700,10 +706,6 @@ func (n *linuxNodeHandler) insertNeighbor(ctx context.Context, newNode *nodeType
 			return
 		}
 		n.neighByNextHop[nextHopStr] = &neigh
-
-		if option.Config.NodePortHairpin {
-			neighborsmap.NeighRetire(nextHopIPv4)
-		}
 	}
 }
 
@@ -731,7 +733,6 @@ func (n *linuxNodeHandler) deleteNeighbor(oldNode *nodeTypes.Node) {
 		if found {
 			if err := netlink.NeighDel(neigh); err != nil {
 				log.WithFields(logrus.Fields{
-					logfields.LogSubsys:    "node-neigh",
 					logfields.IPAddr:       neigh.IP,
 					logfields.HardwareAddr: neigh.HardwareAddr,
 					logfields.LinkIndex:    neigh.LinkIndex,
@@ -1288,15 +1289,6 @@ func (n *linuxNodeHandler) NodeNeighDiscoveryEnabled() bool {
 // NodeNeighborRefresh is called to refresh node neighbor table.
 // This is currently triggered by controller neighbor-table-refresh
 func (n *linuxNodeHandler) NodeNeighborRefresh(ctx context.Context, nodeToRefresh nodeTypes.Node) {
-	n.mutex.Lock()
-	isInitialized := n.isInitialized
-	n.mutex.Unlock()
-	if !isInitialized {
-		// Wait until the node is initialized. When it's not, insertNeighbor()
-		// is not invoked, so there is nothing to refresh.
-		return
-	}
-
 	var ifaceName string
 	if option.Config.EnableNodePort {
 		ifaceName = option.Config.DirectRoutingDevice
