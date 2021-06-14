@@ -94,7 +94,7 @@ func sortFlows(
 					break flowsLoop
 				}
 				if pq.Len() == qlen {
-					f := pq.Pop()
+					f := pq.Pop().(*observerpb.GetFlowsResponse)
 					select {
 					case sortedFlows <- f:
 					case <-ctx.Done():
@@ -106,7 +106,8 @@ func sortFlows(
 				// Make sure to drain old flows from the queue when no new
 				// flows are received. The bufferDrainTimeout duration is used
 				// as a sorting window.
-				for _, f := range pq.PopOlderThan(t.Add(-bufferDrainTimeout)) {
+				for _, o := range pq.PopOlderThan(t.Add(-bufferDrainTimeout)) {
+					f := o.(*observerpb.GetFlowsResponse)
 					select {
 					case sortedFlows <- f:
 					case <-ctx.Done():
@@ -118,7 +119,8 @@ func sortFlows(
 			}
 		}
 		// drain the queue
-		for f := pq.Pop(); f != nil; f = pq.Pop() {
+		for o := pq.Pop(); o != nil; o = pq.Pop() {
+			f := o.(*observerpb.GetFlowsResponse)
 			select {
 			case sortedFlows <- f:
 			case <-ctx.Done():

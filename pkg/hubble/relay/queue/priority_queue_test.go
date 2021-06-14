@@ -35,6 +35,11 @@ var (
 	resp3 = &observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 3}}
 	resp4 = &observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 4}}
 	resp5 = &observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 5}}
+
+	resp6 = &observerpb.GetAgentEventsResponse{Time: &timestamppb.Timestamp{Seconds: 6}}
+	resp7 = &observerpb.GetAgentEventsResponse{Time: &timestamppb.Timestamp{Seconds: 7}}
+
+	resp8 = &observerpb.GetDebugEventsResponse{Time: &timestamppb.Timestamp{Seconds: 8}}
 )
 
 func TestPriorityQueue(t *testing.T) {
@@ -76,6 +81,24 @@ func TestPriorityQueue(t *testing.T) {
 	event = pq.Pop()
 	assert.Equal(t, event, resp5)
 	assert.Equal(t, pq.Len(), 0)
+
+	// push some GetAgentEventsResponse objects
+	pq.Push(resp6)
+	pq.Push(resp7)
+	assert.Equal(t, pq.Len(), 2)
+	event = pq.Pop()
+	assert.Equal(t, event, resp6)
+
+	// types can by mixed as well, as long as they implement interface Object
+	pq.Push(resp8)
+	pq.Push(resp0)
+	assert.Equal(t, pq.Len(), 3)
+	event = pq.Pop()
+	assert.Equal(t, event, resp0)
+	event = pq.Pop()
+	assert.Equal(t, event, resp7)
+	event = pq.Pop()
+	assert.Equal(t, event, resp8)
 }
 
 func TestPriorityQueue_WithobjectsInTheSameSecond(t *testing.T) {
@@ -105,63 +128,63 @@ func TestPriorityQueue_GrowingOverInitialCapacity(t *testing.T) {
 func TestPriorityQueue_PopOlderThan(t *testing.T) {
 	tests := []struct {
 		name   string
-		has    []*observerpb.GetFlowsResponse
+		has    []Object
 		filter time.Time
-		want   []*observerpb.GetFlowsResponse
+		want   []Object
 	}{
 		{
 			"some older, some newer",
-			[]*observerpb.GetFlowsResponse{
-				{Time: &timestamppb.Timestamp{Seconds: 5}},
-				{Time: &timestamppb.Timestamp{Seconds: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 4}},
-				{Time: &timestamppb.Timestamp{Seconds: 2}},
-				{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 3}},
+			[]Object{
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 5}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 4}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 2}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 3}},
 			},
 			time.Unix(3, 1).UTC(),
-			[]*observerpb.GetFlowsResponse{
-				{Time: &timestamppb.Timestamp{Seconds: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 2}},
-				{Time: &timestamppb.Timestamp{Seconds: 3}},
+			[]Object{
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 2}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 3}},
 			},
 		}, {
 			"all olders",
-			[]*observerpb.GetFlowsResponse{
-				{Time: &timestamppb.Timestamp{Seconds: 2}},
-				{Time: &timestamppb.Timestamp{Seconds: 5}},
-				{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 3}},
-				{Time: &timestamppb.Timestamp{Seconds: 4}},
-				{Time: &timestamppb.Timestamp{Seconds: 1}},
+			[]Object{
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 2}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 5}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 3}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 4}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1}},
 			},
 			time.Unix(6, 0).UTC(),
-			[]*observerpb.GetFlowsResponse{
-				{Time: &timestamppb.Timestamp{Seconds: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 2}},
-				{Time: &timestamppb.Timestamp{Seconds: 3}},
-				{Time: &timestamppb.Timestamp{Seconds: 4}},
-				{Time: &timestamppb.Timestamp{Seconds: 5}},
+			[]Object{
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 2}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 3}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 4}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 5}},
 			},
 		}, {
 			"all more recent",
-			[]*observerpb.GetFlowsResponse{
-				{Time: &timestamppb.Timestamp{Seconds: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 5}},
-				{Time: &timestamppb.Timestamp{Seconds: 2}},
-				{Time: &timestamppb.Timestamp{Seconds: 4}},
-				{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
-				{Time: &timestamppb.Timestamp{Seconds: 3}},
+			[]Object{
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 5}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 2}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 4}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 1, Nanos: 1}},
+				&observerpb.GetFlowsResponse{Time: &timestamppb.Timestamp{Seconds: 3}},
 			},
 			time.Unix(0, 0).UTC(),
-			[]*observerpb.GetFlowsResponse{},
+			[]Object{},
 		}, {
 			"empty queue",
 			nil,
 			time.Unix(0, 0).UTC(),
-			[]*observerpb.GetFlowsResponse{},
+			[]Object{},
 		},
 	}
 	for _, tt := range tests {

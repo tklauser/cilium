@@ -19,10 +19,11 @@ import (
 	"time"
 
 	observerpb "github.com/cilium/cilium/api/v1/observer"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// PriorityQueue is a priority queue of observerpb.GetFlowsResponse. It
-// implements heap.Interface. GetFlowsResponse objects are ordered based on
+// PriorityQueue is a priority queue of protobuf responses which implement
+// interface Object. It implements heap.Interface.  Objects are ordered based on
 // their timestamp value; the older the timestamp, the higher the priority.
 //
 // This implementation is loosely based on the priority queue example in
@@ -31,7 +32,18 @@ type PriorityQueue struct {
 	h minHeap
 }
 
-type minHeap []*observerpb.GetFlowsResponse
+type Object interface {
+	GetTime() *timestamppb.Timestamp
+}
+
+// Ensure that all protobuf response types implement Object.
+var (
+	_ Object = (*observerpb.GetFlowsResponse)(nil)
+	_ Object = (*observerpb.GetAgentEventsResponse)(nil)
+	_ Object = (*observerpb.GetDebugEventsResponse)(nil)
+)
+
+type minHeap []Object
 
 // Ensure that minHeap implements heap.Interface.
 var _ heap.Interface = (*minHeap)(nil)
@@ -49,24 +61,26 @@ func (pq PriorityQueue) Len() int {
 }
 
 // Push adds object resp to the queue.
-func (pq *PriorityQueue) Push(resp *observerpb.GetFlowsResponse) {
+func (pq *PriorityQueue) Push(resp Object) {
 	heap.Push(&pq.h, resp)
 }
 
 // Pop removes and returns the oldest object in the queue. Pop returns nil when
 // the queue is empty.
-func (pq *PriorityQueue) Pop() *observerpb.GetFlowsResponse {
-	resp := heap.Pop(&pq.h).(*observerpb.GetFlowsResponse)
-	return resp
+func (pq *PriorityQueue) Pop() Object {
+	if resp, ok := heap.Pop(&pq.h).(Object); ok {
+		return resp
+	}
+	return nil
 }
 
 // PopOlderThan removes and returns objects in the queue that are older than t.
 // Objects in the returned list are sorted chronologically from the oldest to
 // the more recent.
-func (pq *PriorityQueue) PopOlderThan(t time.Time) []*observerpb.GetFlowsResponse {
+func (pq *PriorityQueue) PopOlderThan(t time.Time) []Object {
 	// pre-allocate enough memory for the slice to hold every element in the
 	// queue as flushing the entire queue is a common pattern
-	ret := make([]*observerpb.GetFlowsResponse, 0, pq.Len())
+	ret := make([]Object, 0, pq.Len())
 	for {
 		resp := pq.Pop()
 		if resp == nil {
@@ -99,7 +113,7 @@ func (h minHeap) Swap(i, j int) {
 }
 
 func (h *minHeap) Push(x interface{}) {
-	resp := x.(*observerpb.GetFlowsResponse)
+	resp := x.(Object)
 	*h = append(*h, resp)
 }
 
@@ -107,7 +121,7 @@ func (h *minHeap) Pop() interface{} {
 	old := *h
 	n := len(old)
 	if n == 0 {
-		return (*observerpb.GetFlowsResponse)(nil)
+		return (Object)(nil)
 	}
 	resp := old[n-1]
 	old[n-1] = nil // avoid memory leak
