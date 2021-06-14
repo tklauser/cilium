@@ -88,7 +88,6 @@ func (s *Server) GetFlows(req *observerpb.GetFlowsRequest, stream observerpb.Obs
 		ctx = metadata.NewOutgoingContext(ctx, md)
 	}
 	ctx, cancel := context.WithCancel(ctx)
-
 	defer cancel()
 
 	peers := s.peers.List()
@@ -174,7 +173,76 @@ sortedFlowsLoop:
 // GetAgentEvents implements observerpb.ObserverServer.GetAgentEvents by proxying requests to
 // the hubble instance the proxy is connected to.
 func (s *Server) GetAgentEvents(req *observerpb.GetAgentEventsRequest, stream observerpb.Observer_GetAgentEventsServer) error {
-	return grpcStatus.Errorf(codes.Unimplemented, "GetAgentEvents not yet implemented")
+	ctx := stream.Context()
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok {
+		ctx = metadata.NewOutgoingContext(ctx, md)
+	}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	peers := s.peers.List()
+	qlen := s.opts.sortBufferMaxLen // we don't want to buffer too many events
+	if nqlen := req.GetNumber() * uint64(len(peers)); nqlen > 0 && nqlen < uint64(qlen) {
+		// don't make the queue bigger than necessary as it would be a problem
+		// with the priority queue (we pop out when the queue is full)
+		qlen = int(nqlen)
+	}
+
+	g, gctx := errgroup.WithContext(ctx)
+	events := make(chan *observerpb.GetAgentEventsResponse, qlen)
+	var connectedNodes, unavailableNodes []string
+
+	for _, p := range peers {
+		if !isAvailable(p.Conn) {
+			s.opts.log.WithField("address", p.Address).Infof(
+				"No connection to peer %s, skipping", p.Name,
+			)
+			s.peers.ReportOffline(p.Name)
+			unavailableNodes = append(unavailableNodes, p.Name)
+			continue
+		}
+		connectedNodes = append(connectedNodes, p.Name)
+		p := p
+		g.Go(func() error {
+			// retrieveAgentEventsFromPeer blocks until the peer
+			// finishes the request by closing the connection, an
+			// error occurs, or gctx expires.
+			err := retrieveAgentEventsFromPeer(gctx, s.opts.ocb.observerClient(&p), req, events)
+			if err != nil {
+				s.opts.log.WithFields(logrus.Fields{
+					"error": err,
+					"peer":  p,
+				}).Warning("Failed to retrieve agent events from peer")
+				select {
+				case <-gctx.Done():
+				}
+			}
+			return nil
+		})
+	}
+	go func() {
+		g.Wait()
+		close(events)
+	}()
+
+	sortedEvents := sortAgentEvents(ctx, events, qlen, s.opts.sortBufferDrainTimeout)
+
+sortedAgentEventsLoop:
+	for {
+		select {
+		case event, ok := <-sortedEvents:
+			if !ok {
+				break sortedAgentEventsLoop
+			}
+			if err := stream.Send(event); err != nil {
+				return err
+			}
+		case <-ctx.Done():
+			break sortedAgentEventsLoop
+		}
+	}
+	return g.Wait()
 }
 
 // GetDebugEvents implements observerpb.ObserverServer.GetDebugEvents by proxying requests to

@@ -131,6 +131,94 @@ func sortFlows(
 	return sortedFlows
 }
 
+func retrieveAgentEventsFromPeer(
+	ctx context.Context,
+	client observerpb.ObserverClient,
+	req *observerpb.GetAgentEventsRequest,
+	events chan<- *observerpb.GetAgentEventsResponse,
+) error {
+	c, err := client.GetAgentEvents(ctx, req)
+	if err != nil {
+		return err
+	}
+	for {
+		event, err := c.Recv()
+		switch err {
+		case io.EOF, context.Canceled:
+			return nil
+		case nil:
+			select {
+			case events <- event:
+			case <-ctx.Done():
+				return nil
+			}
+		default:
+			if status.Code(err) != codes.Canceled {
+				return err
+			}
+			return nil
+		}
+	}
+}
+
+func sortAgentEvents(
+	ctx context.Context,
+	events <-chan *observerpb.GetAgentEventsResponse,
+	qlen int,
+	bufferDrainTimeout time.Duration,
+) <-chan *observerpb.GetAgentEventsResponse {
+	pq := queue.NewPriorityQueue(qlen)
+	sortedEvents := make(chan *observerpb.GetAgentEventsResponse, qlen)
+
+	go func() {
+		defer close(sortedEvents)
+		bufferTimer, bufferTimerDone := inctimer.New()
+		defer bufferTimerDone()
+	eventsLoop:
+		for {
+			select {
+			case event, ok := <-events:
+				if !ok {
+					break eventsLoop
+				}
+				if pq.Len() == qlen {
+					e := pq.Pop().(*observerpb.GetAgentEventsResponse)
+					select {
+					case sortedEvents <- e:
+					case <-ctx.Done():
+						return
+					}
+				}
+				pq.Push(event)
+			case t := <-bufferTimer.After(bufferDrainTimeout):
+				// Make sure to drain old flows from the queue when no new
+				// flows are received. The bufferDrainTimeout duration is used
+				// as a sorting window.
+				for _, o := range pq.PopOlderThan(t.Add(-bufferDrainTimeout)) {
+					e := o.(*observerpb.GetAgentEventsResponse)
+					select {
+					case sortedEvents <- e:
+					case <-ctx.Done():
+						return
+					}
+				}
+			case <-ctx.Done():
+				return
+			}
+		}
+		// drain the queue
+		for o := pq.Pop(); o != nil; o = pq.Pop() {
+			e := o.(*observerpb.GetAgentEventsResponse)
+			select {
+			case sortedEvents <- e:
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+	return sortedEvents
+}
+
 func nodeStatusError(err error, nodeNames ...string) *observerpb.GetFlowsResponse {
 	msg := err.Error()
 	if s, ok := status.FromError(err); ok && s.Code() == codes.Unknown {
