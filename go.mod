@@ -7,7 +7,7 @@ require (
 	github.com/Azure/azure-sdk-for-go v54.0.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.21
 	github.com/Azure/go-autorest/autorest/adal v0.9.14
-	github.com/Azure/go-autorest/autorest/azure/auth v0.5.7
+	github.com/Azure/go-autorest/autorest/azure/auth v0.5.8
 	github.com/Azure/go-autorest/autorest/to v0.4.0
 	github.com/Azure/go-autorest/autorest/validation v0.2.0 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1214
@@ -86,7 +86,7 @@ require (
 	go.mongodb.org/mongo-driver v1.5.1 // indirect
 	go.uber.org/goleak v1.1.10
 	go.universe.tf/metallb v0.10.0
-	golang.org/x/crypto v0.0.0-20210503195802-e9a32991a82e
+	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20210906170528-6f6e22806c34
