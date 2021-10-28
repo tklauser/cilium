@@ -1,3 +1,53 @@
+# Release v1.8.1
+
+### Smithy Go Module
+* **Bug Fix**: Fixed an issue that would cause the HTTP Content-Length to be set to 0 if the stream body was not set.
+  * Fixes [aws/aws-sdk-go-v2#1418](https://github.com/aws/aws-sdk-go-v2/issues/1418)
+
+# Release v1.8.0
+
+### Smithy Go Module
+
+* `time`: Add support for parsing additional DateTime timestamp format ([#324](https://github.com/aws/smithy-go/pull/324))
+  * Adds support for parsing DateTime timestamp formatted time similar to RFC 3339, but without the `Z` character, nor UTC offset.
+  * Fixes [#1387](https://github.com/aws/aws-sdk-go-v2/issues/1387)
+
+# Release v1.7.0
+
+### Smithy Go Module
+* `ptr`:  Handle error for deferred file close call ([#314](https://github.com/aws/smithy-go/pull/314))
+  * Handle error for defer close call
+* `middleware`: Add Clone to Metadata ([#318](https://github.com/aws/smithy-go/pull/318))
+  * Adds a new Clone method to the middleware Metadata type. This provides a shallow clone of the entries in the Metadata.
+* `document`: Add new package for document shape serialization support ([#310](https://github.com/aws/smithy-go/pull/310))
+
+### Codegen
+* Add Smithy Document Shape Support ([#310](https://github.com/aws/smithy-go/pull/310))
+  * Adds support for Smithy Document shapes and supporting types for protocols to implement support
+
+# Release v1.6.0 (2021-07-15)
+
+### Smithy Go Module
+* `encoding/httpbinding`: Support has been added for encoding `float32` and `float64` values that are `NaN`, `Infinity`, or `-Infinity`. ([#316](https://github.com/aws/smithy-go/pull/316))
+
+### Codegen
+* Adds support for handling `float32` and `float64` `NaN` values in HTTP Protocol Unit Tests. ([#316](https://github.com/aws/smithy-go/pull/316))
+* Adds support protocol generator implementations to override the error code string returned by `ErrorCode` methods on generated error types. ([#315](https://github.com/aws/smithy-go/pull/315))
+
+# Release v1.5.0 (2021-06-25)
+
+### Smithy Go module
+* `time`: Update time parsing to not be as strict for HTTPDate and DateTime ([#307](https://github.com/aws/smithy-go/pull/307))
+  * Fixes [#302](https://github.com/aws/smithy-go/issues/302) by changing time to UTC before formatting so no local offset time is lost.
+
+### Codegen
+* Adds support for integrating client members via plugins ([#301](https://github.com/aws/smithy-go/pull/301))
+* Fix serialization of enum types marked with payload trait ([#296](https://github.com/aws/smithy-go/pull/296))
+* Update generation of API client modules to include a manifest of files generated ([#283](https://github.com/aws/smithy-go/pull/283))
+* Update Group Java group ID for smithy-go generator ([#298](https://github.com/aws/smithy-go/pull/298))
+* Support the delegation of determining the errors that can occur for an operation ([#304](https://github.com/aws/smithy-go/pull/304))
+* Support for marking and documenting deprecated client config fields. ([#303](https://github.com/aws/smithy-go/pull/303))
+
 # Release v1.4.0 (2021-05-06)
 
 ### Smithy Go module
