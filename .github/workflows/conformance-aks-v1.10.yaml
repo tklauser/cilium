@@ -89,7 +89,7 @@ jobs:
       # paths-filter to work.
       - name: Checkout code
         if: ${{ github.event.issue.pull_request }}
-        uses: actions/checkout@1e204e9a9253d643386038d443f96446fa156a97
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
         with:
           persist-credentials: false
       - name: Retrieve pull request's base and head
@@ -179,7 +179,7 @@ jobs:
           creds: ${{ secrets.AZURE_PR_SP_CREDS }}
 
       - name: Display Azure CLI info
-        uses: azure/CLI@4b58c946a0f48d82cc2b6e31c0d15a6604859554
+        uses: azure/CLI@37ee7d1eebfd10307f0602833ec70333a359c4b5
         with:
           azcliversion: 2.0.72
           inlineScript: |
