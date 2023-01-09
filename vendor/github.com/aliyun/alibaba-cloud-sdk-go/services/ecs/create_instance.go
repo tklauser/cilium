@@ -148,7 +148,7 @@ type CreateInstanceSystemDisk struct {
 
 // CreateInstanceTag is a repeated param struct in CreateInstanceRequest
 type CreateInstanceTag struct {
-	Value string `name:"value"`
+	Value string `name:"Value"`
 	Key   string `name:"Key"`
 }
 
@@ -189,7 +189,7 @@ func CreateCreateInstanceRequest() (request *CreateInstanceRequest) {
 	request = &CreateInstanceRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "CreateInstance", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "CreateInstance", "", "")
 	request.Method = requests.POST
 	return
 }
