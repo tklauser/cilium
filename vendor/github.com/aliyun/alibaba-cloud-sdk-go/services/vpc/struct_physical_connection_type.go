@@ -50,4 +50,6 @@ type PhysicalConnectionType struct {
 	VlanId                         string `json:"VlanId" xml:"VlanId"`
 	OrderMode                      string `json:"OrderMode" xml:"OrderMode"`
 	VpconnStatus                   string `json:"VpconnStatus" xml:"VpconnStatus"`
+	ExpectSpec                     string `json:"ExpectSpec" xml:"ExpectSpec"`
+	ResourceGroupId                string `json:"ResourceGroupId" xml:"ResourceGroupId"`
 }

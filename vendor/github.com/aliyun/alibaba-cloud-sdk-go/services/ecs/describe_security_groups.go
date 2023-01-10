@@ -94,7 +94,7 @@ type DescribeSecurityGroupsRequest struct {
 
 // DescribeSecurityGroupsTag is a repeated param struct in DescribeSecurityGroupsRequest
 type DescribeSecurityGroupsTag struct {
-	Value string `name:"value"`
+	Value string `name:"Value"`
 	Key   string `name:"Key"`
 }
 
@@ -115,7 +115,7 @@ func CreateDescribeSecurityGroupsRequest() (request *DescribeSecurityGroupsReque
 	request = &DescribeSecurityGroupsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeSecurityGroups", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeSecurityGroups", "", "")
 	request.Method = requests.POST
 	return
 }
