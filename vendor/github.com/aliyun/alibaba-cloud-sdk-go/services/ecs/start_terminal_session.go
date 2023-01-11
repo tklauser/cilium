@@ -76,6 +76,7 @@ type StartTerminalSessionRequest struct {
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
 	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	InstanceId           *[]string        `position:"Query" name:"InstanceId"  type:"Repeated"`
+	PortNumber           requests.Integer `position:"Query" name:"PortNumber"`
 }
 
 // StartTerminalSessionResponse is the response struct for api StartTerminalSession
@@ -92,7 +93,7 @@ func CreateStartTerminalSessionRequest() (request *StartTerminalSessionRequest) 
 	request = &StartTerminalSessionRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "StartTerminalSession", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "StartTerminalSession", "", "")
 	request.Method = requests.POST
 	return
 }

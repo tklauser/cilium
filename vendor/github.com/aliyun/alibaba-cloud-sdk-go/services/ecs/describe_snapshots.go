@@ -102,7 +102,7 @@ type DescribeSnapshotsRequest struct {
 
 // DescribeSnapshotsTag is a repeated param struct in DescribeSnapshotsRequest
 type DescribeSnapshotsTag struct {
-	Value string `name:"value"`
+	Value string `name:"Value"`
 	Key   string `name:"Key"`
 }
 
@@ -122,7 +122,7 @@ func CreateDescribeSnapshotsRequest() (request *DescribeSnapshotsRequest) {
 	request = &DescribeSnapshotsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeSnapshots", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeSnapshots", "", "")
 	request.Method = requests.POST
 	return
 }

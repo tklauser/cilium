@@ -87,7 +87,7 @@ type CreateSecurityGroupRequest struct {
 
 // CreateSecurityGroupTag is a repeated param struct in CreateSecurityGroupRequest
 type CreateSecurityGroupTag struct {
-	Value string `name:"value"`
+	Value string `name:"Value"`
 	Key   string `name:"Key"`
 }
 
@@ -103,7 +103,7 @@ func CreateCreateSecurityGroupRequest() (request *CreateSecurityGroupRequest) {
 	request = &CreateSecurityGroupRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "CreateSecurityGroup", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "CreateSecurityGroup", "", "")
 	request.Method = requests.POST
 	return
 }
