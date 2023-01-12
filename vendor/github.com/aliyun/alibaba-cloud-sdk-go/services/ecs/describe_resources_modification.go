@@ -82,6 +82,7 @@ type DescribeResourcesModificationRequest struct {
 	OperationType        string           `position:"Query" name:"OperationType"`
 	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	DestinationResource  string           `position:"Query" name:"DestinationResource"`
+	ZoneId               string           `position:"Query" name:"ZoneId"`
 }
 
 // DescribeResourcesModificationResponse is the response struct for api DescribeResourcesModification
@@ -96,7 +97,7 @@ func CreateDescribeResourcesModificationRequest() (request *DescribeResourcesMod
 	request = &DescribeResourcesModificationRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeResourcesModification", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeResourcesModification", "", "")
 	request.Method = requests.POST
 	return
 }
