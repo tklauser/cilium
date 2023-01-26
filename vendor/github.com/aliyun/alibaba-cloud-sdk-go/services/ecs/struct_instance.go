@@ -85,6 +85,7 @@ type Instance struct {
 	InnerIpAddress                  InnerIpAddressInDescribeInstances    `json:"InnerIpAddress" xml:"InnerIpAddress"`
 	PublicIpAddress                 PublicIpAddressInDescribeInstances   `json:"PublicIpAddress" xml:"PublicIpAddress"`
 	RdmaIpAddress                   RdmaIpAddress                        `json:"RdmaIpAddress" xml:"RdmaIpAddress"`
+	ImageOptions                    ImageOptions                         `json:"ImageOptions" xml:"ImageOptions"`
 	DedicatedHostAttribute          DedicatedHostAttribute               `json:"DedicatedHostAttribute" xml:"DedicatedHostAttribute"`
 	EcsCapacityReservationAttr      EcsCapacityReservationAttr           `json:"EcsCapacityReservationAttr" xml:"EcsCapacityReservationAttr"`
 	HibernationOptions              HibernationOptions                   `json:"HibernationOptions" xml:"HibernationOptions"`
@@ -93,7 +94,7 @@ type Instance struct {
 	MetadataOptions                 MetadataOptions                      `json:"MetadataOptions" xml:"MetadataOptions"`
 	CpuOptions                      CpuOptions                           `json:"CpuOptions" xml:"CpuOptions"`
 	VpcAttributes                   VpcAttributes                        `json:"VpcAttributes" xml:"VpcAttributes"`
-	Tags                            TagsInDescribeInstances              `json:"Tags" xml:"Tags"`
 	NetworkInterfaces               NetworkInterfacesInDescribeInstances `json:"NetworkInterfaces" xml:"NetworkInterfaces"`
+	Tags                            TagsInDescribeInstances              `json:"Tags" xml:"Tags"`
 	OperationLocks                  OperationLocksInDescribeInstances    `json:"OperationLocks" xml:"OperationLocks"`
 }
