@@ -72,6 +72,7 @@ func (client *Client) ResetDisksWithCallback(request *ResetDisksRequest, callbac
 type ResetDisksRequest struct {
 	*requests.RpcRequest
 	ResourceOwnerId      requests.Integer  `position:"Query" name:"ResourceOwnerId"`
+	DryRun               requests.Boolean  `position:"Query" name:"DryRun"`
 	ResourceOwnerAccount string            `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string            `position:"Query" name:"OwnerAccount"`
 	OwnerId              requests.Integer  `position:"Query" name:"OwnerId"`
@@ -96,7 +97,7 @@ func CreateResetDisksRequest() (request *ResetDisksRequest) {
 	request = &ResetDisksRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "ResetDisks", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "ResetDisks", "", "")
 	request.Method = requests.POST
 	return
 }
