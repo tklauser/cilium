@@ -112,8 +112,12 @@ type DescribeNetworkInterfaceAttributeResponse struct {
 	SecurityGroupIds            SecurityGroupIdsInDescribeNetworkInterfaceAttribute `json:"SecurityGroupIds" xml:"SecurityGroupIds"`
 	AssociatedPublicIp          AssociatedPublicIp                                  `json:"AssociatedPublicIp" xml:"AssociatedPublicIp"`
 	Attachment                  Attachment                                          `json:"Attachment" xml:"Attachment"`
+	BondInterfaceSpecification  BondInterfaceSpecification                          `json:"BondInterfaceSpecification" xml:"BondInterfaceSpecification"`
+	SlaveInterfaceSpecification SlaveInterfaceSpecification                         `json:"SlaveInterfaceSpecification" xml:"SlaveInterfaceSpecification"`
 	PrivateIpSets               PrivateIpSetsInDescribeNetworkInterfaceAttribute    `json:"PrivateIpSets" xml:"PrivateIpSets"`
 	Ipv6Sets                    Ipv6SetsInDescribeNetworkInterfaceAttribute         `json:"Ipv6Sets" xml:"Ipv6Sets"`
+	Ipv4PrefixSets              Ipv4PrefixSetsInDescribeNetworkInterfaceAttribute   `json:"Ipv4PrefixSets" xml:"Ipv4PrefixSets"`
+	Ipv6PrefixSets              Ipv6PrefixSetsInDescribeNetworkInterfaceAttribute   `json:"Ipv6PrefixSets" xml:"Ipv6PrefixSets"`
 	Tags                        TagsInDescribeNetworkInterfaceAttribute             `json:"Tags" xml:"Tags"`
 }
 
@@ -122,7 +126,7 @@ func CreateDescribeNetworkInterfaceAttributeRequest() (request *DescribeNetworkI
 	request = &DescribeNetworkInterfaceAttributeRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeNetworkInterfaceAttribute", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeNetworkInterfaceAttribute", "", "")
 	request.Method = requests.POST
 	return
 }
