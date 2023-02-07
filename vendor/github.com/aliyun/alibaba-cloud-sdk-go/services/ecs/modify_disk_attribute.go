@@ -82,6 +82,7 @@ type ModifyDiskAttributeRequest struct {
 	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
 	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	BurstingEnabled      requests.Boolean `position:"Query" name:"BurstingEnabled"`
 }
 
 // ModifyDiskAttributeResponse is the response struct for api ModifyDiskAttribute
@@ -95,7 +96,7 @@ func CreateModifyDiskAttributeRequest() (request *ModifyDiskAttributeRequest) {
 	request = &ModifyDiskAttributeRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "ModifyDiskAttribute", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "ModifyDiskAttribute", "", "")
 	request.Method = requests.POST
 	return
 }

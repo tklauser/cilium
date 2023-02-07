@@ -111,7 +111,7 @@ type DescribeDisksRequest struct {
 
 // DescribeDisksTag is a repeated param struct in DescribeDisksRequest
 type DescribeDisksTag struct {
-	Value string `name:"value"`
+	Value string `name:"Value"`
 	Key   string `name:"Key"`
 }
 
@@ -131,7 +131,7 @@ func CreateDescribeDisksRequest() (request *DescribeDisksRequest) {
 	request = &DescribeDisksRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeDisks", "ecs", "openAPI")
+	request.InitWithApiInfo("Ecs", "2014-05-26", "DescribeDisks", "", "")
 	request.Method = requests.POST
 	return
 }
