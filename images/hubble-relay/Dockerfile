@@ -11,7 +11,7 @@
 # The key may be found at the following address:
 # https://raw.githubusercontent.com/GoogleContainerTools/distroless/main/cosign.pub
 ARG BASE_IMAGE=gcr.io/distroless/static-debian11:nonroot@sha256:48e033b53596b61568909999ce26e8fac7d459e81b29d36ff014561ff08dc426
-ARG GOLANG_IMAGE=docker.io/library/golang:1.19.6@sha256:7ce31d15a3a4dbf20446cccffa4020d3a2974ad2287d96123f55caf22c7adb71
+ARG GOLANG_IMAGE=docker.io/library/golang:1.20.1@sha256:13cc469331206a70ef5194ad85644ca81324d4f04ef6df3bf13500c99856de1d
 
 # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
 # Represents the plataform where the build is happening, do not mix with
