@@ -647,9 +647,6 @@ update-go-version: ## Update Go version for all the components (images, CI, dev-
 	# Update dev-doctor Go version.
 	$(QUIET) sed -i 's/^const minGoVersionStr = ".*"/const minGoVersionStr = "$(GO_MAJOR_AND_MINOR_VERSION)"/' tools/dev-doctor/config.go
 	@echo "Updated go version in tools/dev-doctor to $(GO_MAJOR_AND_MINOR_VERSION)"
-	# Update Go version in GitHub action config.
-	$(QUIET) for fl in $(shell find .github/workflows -name "*.yaml" -print) ; do sed -i 's/go-version: .*/go-version: $(GO_IMAGE_VERSION)/g' $$fl ; done
-	@echo "Updated go version in GitHub Actions to $(GO_IMAGE_VERSION)"
 	# Update Go version in main.go.
 	$(QUIET) for fl in $(shell find .  -name main.go -not -path "./vendor/*" -print); do \
 		sed -i \

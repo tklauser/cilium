@@ -235,7 +235,8 @@
       // similar to the examples shown here:
       //   https://docs.renovatebot.com/modules/manager/regex/#advanced-capture
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+_version: (?<currentValue>.*)",
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+[_-]version: (?<currentValue>.*)",
+        ".+[_-]version: (?<currentValue>.*)\\s+# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)"
       ]
     }
   ]
