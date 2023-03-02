@@ -238,6 +238,14 @@
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+[_-]version: (?<currentValue>.*)",
         ".+[_-]version: (?<currentValue>.*)\\s+# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)"
       ]
+    },
+    {
+      "fileMatch": [
+        "^\\.travis.yaml$"
+      ],
+      "matchStrings": [
+        "go: \"(?<currentValue>.*)\\s+# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\""
+      ]
     }
   ]
 }
