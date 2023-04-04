@@ -1,6 +1,7 @@
 FROM ubuntu:20.04
 
 LABEL maintainer="maintainer@cilium.io"
+# renovate: datasource=golang-version depName=golang/go
 ARG GOLANG_VERSION=1.20.1
 
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
