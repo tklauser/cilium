@@ -8,7 +8,7 @@
   // This ensures that the gitAuthor and gitSignOff fields match
   "gitAuthor": "renovate[bot] <bot@renovateapp.com>",
   "includePaths": [
-    ".github/actions/ginkgo/**",
+    ".github/actions/**",
     ".github/workflows/**",
     ".github/kind-config.yaml",
     ".github/kind-config-ipv6.yaml",
@@ -518,8 +518,8 @@
     {
       "fileMatch": [
         "^test/kubernetes-test\\.sh$",
-        "^test/packet/scripts/install\\.sh$"
-        "^.github/actions/set-env-variables/action.yml$"
+        "^test/packet/scripts/install\\.sh$",
+        "^.github/actions/set-env-variables/action\\.yml$"
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+_VERSION=\"(?<currentValue>.*)\""
