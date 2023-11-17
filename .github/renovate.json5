@@ -519,6 +519,7 @@
       "fileMatch": [
         "^test/kubernetes-test\\.sh$",
         "^test/packet/scripts/install\\.sh$"
+        "^.github/actions/set-env-variables/action.yml$"
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+_VERSION=\"(?<currentValue>.*)\""
