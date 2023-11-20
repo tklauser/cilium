@@ -16,7 +16,7 @@ runs:
   using: composite
   steps:
     - name: Setup Conn Disrupt Test
-      uses: cilium/little-vm-helper@0fcaa3fed17811fcd8b6f1b0dc1f24e5f4ff6b13 # v0.0.7
+      uses: cilium/little-vm-helper@908ab1ff8a596a03cd5221a1f8602dc44c3f906d # v0.0.12
       with:
         provision: 'false'
         cmd: |
@@ -27,14 +27,14 @@ runs:
           ./cilium-cli connectivity test --include-conn-disrupt-test --conn-disrupt-test-setup
 
     - name: Operate Cilium
-      uses: cilium/little-vm-helper@0fcaa3fed17811fcd8b6f1b0dc1f24e5f4ff6b13 # v0.0.7
+      uses: cilium/little-vm-helper@908ab1ff8a596a03cd5221a1f8602dc44c3f906d # v0.0.12
       with:
         provision: 'false'
         cmd: |
           ${{ inputs.operation-cmd }}
 
     - name: Perform Conn Disrupt Test
-      uses: cilium/little-vm-helper@0fcaa3fed17811fcd8b6f1b0dc1f24e5f4ff6b13 # v0.0.7
+      uses: cilium/little-vm-helper@908ab1ff8a596a03cd5221a1f8602dc44c3f906d # v0.0.12
       with:
         provision: 'false'
         cmd: |
