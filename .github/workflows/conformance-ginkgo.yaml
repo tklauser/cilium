@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set initial commit status
-        uses: myrotvorets/set-commit-status-action@38f3f27c7d52fb381273e95542f07f0fba301307 # v2.0.0
+        uses: myrotvorets/set-commit-status-action@3730c0a348a2ace3c110851bed53331bc6406e9f # v2.0.1
         with:
           sha: ${{ inputs.SHA || github.sha }}
 
@@ -109,7 +109,7 @@ jobs:
 
       # Load Ginkgo build from GitHub
       - name: Load ginkgo E2E from GH cache
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
         id: cache
         with:
           path: /tmp/.ginkgo-build/
@@ -273,7 +273,7 @@ jobs:
 
       - name: Provision LVH VMs
         id: provision-vh-vms
-        uses: cilium/little-vm-helper@8410a93e544b7e180a2365e5fdab0724a39bc02a # v0.0.13
+        uses: cilium/little-vm-helper@a4311c6d054de3008bdf9195b0fabf6ee60d8bdd # v0.0.17
         with:
           test-name: datapath-conformance
           install-dependencies: true
@@ -288,7 +288,7 @@ jobs:
 
       - name: Provision kind
         timeout-minutes: 5
-        uses: cilium/little-vm-helper@8410a93e544b7e180a2365e5fdab0724a39bc02a # v0.0.13
+        uses: cilium/little-vm-helper@a4311c6d054de3008bdf9195b0fabf6ee60d8bdd # v0.0.17
         with:
           provision: 'false'
           cmd: |
@@ -308,7 +308,7 @@ jobs:
 
       # Load Ginkgo build from GitHub
       - name: Load ${{ matrix.name }} Ginkgo build from GitHub
-        uses: actions/cache/restore@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
         id: cache
         with:
           path: /tmp/.ginkgo-build/
@@ -357,7 +357,7 @@ jobs:
       - name: Run tests
         id: run-tests
         timeout-minutes: 40
-        uses: cilium/little-vm-helper@8410a93e544b7e180a2365e5fdab0724a39bc02a # v0.0.13
+        uses: cilium/little-vm-helper@a4311c6d054de3008bdf9195b0fabf6ee60d8bdd # v0.0.17
         with:
           provision: 'false'
           cmd: |
@@ -417,7 +417,7 @@ jobs:
 
       - name: Fetch artifacts
         if: ${{ !success() && steps.provision-vh-vms.outcome == 'success' }}
-        uses: cilium/little-vm-helper@8410a93e544b7e180a2365e5fdab0724a39bc02a # v0.0.13
+        uses: cilium/little-vm-helper@a4311c6d054de3008bdf9195b0fabf6ee60d8bdd # v0.0.17
         with:
           provision: 'false'
           cmd: |
@@ -479,7 +479,7 @@ jobs:
           fi
 
       - name: Set final commit status
-        uses: myrotvorets/set-commit-status-action@38f3f27c7d52fb381273e95542f07f0fba301307 # v2.0.0
+        uses: myrotvorets/set-commit-status-action@3730c0a348a2ace3c110851bed53331bc6406e9f # v2.0.1
         with:
           sha: ${{ inputs.SHA || github.sha }}
           status: ${{ steps.commit-status.outputs.status }}
