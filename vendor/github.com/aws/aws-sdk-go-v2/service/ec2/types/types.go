@@ -2341,18 +2341,16 @@ type CreateTransitGatewayVpcAttachmentRequestOptions struct {
 	// Enable or disable IPv6 support. The default is disable .
 	Ipv6Support Ipv6SupportValue
 
-	// Enables you to reference a security group across VPCs attached to a transit
-	// gateway (TGW). Use this option to simplify security group management and control
-	// of instance-to-instance traffic across VPCs that are connected by transit
-	// gateway. You can also use this option to migrate from VPC peering (which was the
-	// only option that supported security group referencing) to transit gateways
-	// (which now also support security group referencing). This option is disabled by
-	// default and there are no additional costs to use this feature. If you don't
-	// enable or disable SecurityGroupReferencingSupport in the request, the attachment
-	// will inherit the security group referencing support setting on the transit
-	// gateway. For important information about this feature, see Create a transit
-	// gateway attachment to a VPC (https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html#create-vpc-attachment)
-	// in the Amazon Web Services Transit Gateway Guide.
+	// This parameter is in preview and may not be available for your account. Enables
+	// you to reference a security group across VPCs attached to a transit gateway. Use
+	// this option to simplify security group management and control of
+	// instance-to-instance traffic across VPCs that are connected by transit gateway.
+	// You can also use this option to migrate from VPC peering (which was the only
+	// option that supported security group referencing) to transit gateways (which now
+	// also support security group referencing). This option is disabled by default and
+	// there are no additional costs to use this feature. If you don't enable or
+	// disable SecurityGroupReferencingSupport in the request, the attachment will
+	// inherit the security group referencing support setting on the transit gateway.
 	SecurityGroupReferencingSupport SecurityGroupReferencingSupportValue
 
 	noSmithyDocumentSerde
@@ -3147,11 +3145,11 @@ type EbsBlockDevice struct {
 	// restored from a backing snapshot. The effect of setting the encryption state to
 	// true depends on the volume origin (new or from a snapshot), starting encryption
 	// state, ownership, and whether encryption by default is enabled. For more
-	// information, see Amazon EBS encryption (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encryption-parameters)
-	// in the Amazon EC2 User Guide. In no case can you remove encryption from an
+	// information, see Amazon EBS encryption (https://docs.aws.amazon.com/ebs/latest/userguide/ebs-encryption.html#encryption-parameters)
+	// in the Amazon EBS User Guide. In no case can you remove encryption from an
 	// encrypted volume. Encrypted volumes can only be attached to instances that
 	// support Amazon EBS encryption. For more information, see Supported instance
-	// types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#EBSEncryption_supported_instances)
+	// types (https://docs.aws.amazon.com/ebs/latest/userguide/ebs-encryption-requirements.html#ebs-encryption_supported_instances)
 	// . This parameter is not returned by DescribeImageAttribute . For CreateImage
 	// and RegisterImage , whether you can include this parameter, and the allowed
 	// values differ depending on the type of block device mapping you are creating.
@@ -3219,8 +3217,8 @@ type EbsBlockDevice struct {
 	//   - standard : 1 - 1024 GiB
 	VolumeSize *int32
 
-	// The volume type. For more information, see Amazon EBS volume types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html)
-	// in the Amazon EC2 User Guide.
+	// The volume type. For more information, see Amazon EBS volume types (https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html)
+	// in the Amazon EBS User Guide.
 	VolumeType VolumeType
 
 	noSmithyDocumentSerde
@@ -3249,6 +3247,9 @@ type EbsInfo struct {
 // Describes a parameter used to set up an EBS volume in a block device mapping.
 type EbsInstanceBlockDevice struct {
 
+	// The ARN of the Amazon ECS or Fargate task to which the volume is attached.
+	AssociatedResource *string
+
 	// The time stamp when the attachment initiated.
 	AttachTime *time.Time
 
@@ -3260,6 +3261,10 @@ type EbsInstanceBlockDevice struct {
 
 	// The ID of the EBS volume.
 	VolumeId *string
+
+	// The ID of the Amazon Web Services account that owns the volume. This parameter
+	// is returned only for volumes that are attached to Fargate tasks.
+	VolumeOwnerId *string
 
 	noSmithyDocumentSerde
 }
@@ -3388,8 +3393,10 @@ type EgressOnlyInternetGateway struct {
 	noSmithyDocumentSerde
 }
 
-// Describes the association between an instance and an Elastic Graphics
-// accelerator.
+// Amazon Elastic Graphics reached end of life on January 8, 2024. For workloads
+// that require graphics acceleration, we recommend that you use Amazon EC2 G4ad,
+// G4dn, or G5 instances. Describes the association between an instance and an
+// Elastic Graphics accelerator.
 type ElasticGpuAssociation struct {
 
 	// The ID of the association.
@@ -3408,7 +3415,9 @@ type ElasticGpuAssociation struct {
 	noSmithyDocumentSerde
 }
 
-// Describes the status of an Elastic Graphics accelerator.
+// Amazon Elastic Graphics reached end of life on January 8, 2024. For workloads
+// that require graphics acceleration, we recommend that you use Amazon EC2 G4ad,
+// G4dn, or G5 instances. Describes the status of an Elastic Graphics accelerator.
 type ElasticGpuHealth struct {
 
 	// The health status.
@@ -3417,7 +3426,9 @@ type ElasticGpuHealth struct {
 	noSmithyDocumentSerde
 }
 
-// Describes an Elastic Graphics accelerator.
+// Amazon Elastic Graphics reached end of life on January 8, 2024. For workloads
+// that require graphics acceleration, we recommend that you use Amazon EC2 G4ad,
+// G4dn, or G5 instances. Describes an Elastic Graphics accelerator.
 type ElasticGpus struct {
 
 	// The Availability Zone in the which the Elastic Graphics accelerator resides.
@@ -3444,7 +3455,9 @@ type ElasticGpus struct {
 	noSmithyDocumentSerde
 }
 
-// A specification for an Elastic Graphics accelerator.
+// Amazon Elastic Graphics reached end of life on January 8, 2024. For workloads
+// that require graphics acceleration, we recommend that you use Amazon EC2 G4ad,
+// G4dn, or G5 instances. A specification for an Elastic Graphics accelerator.
 type ElasticGpuSpecification struct {
 
 	// The type of Elastic Graphics accelerator. For more information about the values
@@ -3458,10 +3471,14 @@ type ElasticGpuSpecification struct {
 	noSmithyDocumentSerde
 }
 
-// Describes an elastic GPU.
+// Deprecated. Amazon Elastic Graphics reached end of life on January 8, 2024. For
+// workloads that require graphics acceleration, we recommend that you use Amazon
+// EC2 G4ad, G4dn, or G5 instances.
 type ElasticGpuSpecificationResponse struct {
 
-	// The elastic GPU type.
+	// Deprecated. Amazon Elastic Graphics reached end of life on January 8, 2024. For
+	// workloads that require graphics acceleration, we recommend that you use Amazon
+	// EC2 G4ad, G4dn, or G5 instances.
 	Type *string
 
 	noSmithyDocumentSerde
@@ -4461,7 +4478,12 @@ type FleetLaunchTemplateOverrides struct {
 	// The ID of the subnet in which to launch the instances.
 	SubnetId *string
 
-	// The number of units provided by the specified instance type.
+	// The number of units provided by the specified instance type. When specifying
+	// weights, the price used in the lowest-price and price-capacity-optimized
+	// allocation strategies is per unit hour (where the instance price is divided by
+	// the specified weight). However, if all the specified weights are above the
+	// requested TargetCapacity , resulting in only 1 instance being launched, the
+	// price used is per instance hour.
 	WeightedCapacity *float64
 
 	noSmithyDocumentSerde
@@ -4515,7 +4537,12 @@ type FleetLaunchTemplateOverridesRequest struct {
 	// ID.
 	SubnetId *string
 
-	// The number of units provided by the specified instance type.
+	// The number of units provided by the specified instance type. When specifying
+	// weights, the price used in the lowest-price and price-capacity-optimized
+	// allocation strategies is per unit hour (where the instance price is divided by
+	// the specified weight). However, if all the specified weights are above the
+	// requested TargetCapacity , resulting in only 1 instance being launched, the
+	// price used is per instance hour.
 	WeightedCapacity *float64
 
 	noSmithyDocumentSerde
@@ -5284,8 +5311,7 @@ type Image struct {
 	// The location of the AMI.
 	ImageLocation *string
 
-	// The Amazon Web Services account alias (for example, amazon , self ) or the
-	// Amazon Web Services account ID of the AMI owner.
+	// The owner alias ( amazon | aws-marketplace ).
 	ImageOwnerAlias *string
 
 	// The type of image.
@@ -5712,7 +5738,9 @@ type Instance struct {
 	// EBS Optimized instance.
 	EbsOptimized *bool
 
-	// The Elastic GPU associated with the instance.
+	// Deprecated. Amazon Elastic Graphics reached end of life on January 8, 2024. For
+	// workloads that require graphics acceleration, we recommend that you use Amazon
+	// EC2 G4ad, G4dn, or G5 instances.
 	ElasticGpuAssociations []ElasticGpuAssociation
 
 	// The elastic inference accelerator associated with the instance.
@@ -6235,6 +6263,33 @@ type InstanceMarketOptionsRequest struct {
 	noSmithyDocumentSerde
 }
 
+// The default instance metadata service (IMDS) settings that were set at the
+// account level in the specified Amazon Web Services  Region.
+type InstanceMetadataDefaultsResponse struct {
+
+	// Indicates whether the IMDS endpoint for an instance is enabled or disabled.
+	// When disabled, the instance metadata can't be accessed.
+	HttpEndpoint InstanceMetadataEndpointState
+
+	// The maximum number of hops that the metadata token can travel.
+	HttpPutResponseHopLimit *int32
+
+	// Indicates whether IMDSv2 is required.
+	//   - optional – IMDSv2 is optional, which means that you can use either IMDSv2 or
+	//   IMDSv1.
+	//   - required – IMDSv2 is required, which means that IMDSv1 is disabled, and you
+	//   must use IMDSv2.
+	HttpTokens HttpTokensState
+
+	// Indicates whether access to instance tags from the instance metadata is enabled
+	// or disabled. For more information, see Work with instance tags using the
+	// instance metadata (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#work-with-tags-in-IMDS)
+	// in the Amazon EC2 User Guide.
+	InstanceMetadataTags InstanceMetadataTagsState
+
+	noSmithyDocumentSerde
+}
+
 // The metadata options for the instance.
 type InstanceMetadataOptionsRequest struct {
 
@@ -6244,26 +6299,28 @@ type InstanceMetadataOptionsRequest struct {
 	HttpEndpoint InstanceMetadataEndpointState
 
 	// Enables or disables the IPv6 endpoint for the instance metadata service.
+	// Default: disabled
 	HttpProtocolIpv6 InstanceMetadataProtocolState
 
-	// The desired HTTP PUT response hop limit for instance metadata requests. The
-	// larger the number, the further instance metadata requests can travel. Default: 1
-	// Possible values: Integers from 1 to 64
+	// The maximum number of hops that the metadata token can travel. Possible values:
+	// Integers from 1 to 64
 	HttpPutResponseHopLimit *int32
 
-	// IMDSv2 uses token-backed sessions. Set the use of HTTP tokens to optional (in
-	// other words, set the use of IMDSv2 to optional ) or required (in other words,
-	// set the use of IMDSv2 to required ).
-	//   - optional - When IMDSv2 is optional, you can choose to retrieve instance
-	//   metadata with or without a session token in your request. If you retrieve the
-	//   IAM role credentials without a token, the IMDSv1 role credentials are returned.
-	//   If you retrieve the IAM role credentials using a valid session token, the IMDSv2
-	//   role credentials are returned.
-	//   - required - When IMDSv2 is required, you must send a session token with any
-	//   instance metadata retrieval requests. In this state, retrieving the IAM role
-	//   credentials always returns IMDSv2 credentials; IMDSv1 credentials are not
-	//   available.
-	// Default: optional
+	// Indicates whether IMDSv2 is required.
+	//   - optional - IMDSv2 is optional, which means that you can use either IMDSv2 or
+	//   IMDSv1.
+	//   - required - IMDSv2 is required, which means that IMDSv1 is disabled, and you
+	//   must use IMDSv2.
+	// Default:
+	//   - If the value of ImdsSupport for the Amazon Machine Image (AMI) for your
+	//   instance is v2.0 and the account level default is set to no-preference , the
+	//   default is required .
+	//   - If the value of ImdsSupport for the Amazon Machine Image (AMI) for your
+	//   instance is v2.0 , but the account level default is set to V1 or V2 , the
+	//   default is optional .
+	// The default value can also be affected by other combinations of parameters. For
+	// more information, see Order of precedence for instance metadata options (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-options.html#instance-metadata-options-order-of-precedence)
+	// in the Amazon EC2 User Guide.
 	HttpTokens HttpTokensState
 
 	// Set to enabled to allow access to instance tags from the instance metadata. Set
@@ -6283,27 +6340,18 @@ type InstanceMetadataOptionsResponse struct {
 	HttpEndpoint InstanceMetadataEndpointState
 
 	// Indicates whether the IPv6 endpoint for the instance metadata service is
-	// enabled or disabled.
+	// enabled or disabled. Default: disabled
 	HttpProtocolIpv6 InstanceMetadataProtocolState
 
-	// The desired HTTP PUT response hop limit for instance metadata requests. The
-	// larger the number, the further instance metadata requests can travel. Default: 1
-	// Possible values: Integers from 1 to 64
+	// The maximum number of hops that the metadata token can travel. Possible values:
+	// Integers from 1 to 64
 	HttpPutResponseHopLimit *int32
 
-	// IMDSv2 uses token-backed sessions. Indicates whether the use of HTTP tokens is
-	// optional (in other words, indicates whether the use of IMDSv2 is optional ) or
-	// required (in other words, indicates whether the use of IMDSv2 is required ).
-	//   - optional - When IMDSv2 is optional, you can choose to retrieve instance
-	//   metadata with or without a session token in your request. If you retrieve the
-	//   IAM role credentials without a token, the IMDSv1 role credentials are returned.
-	//   If you retrieve the IAM role credentials using a valid session token, the IMDSv2
-	//   role credentials are returned.
-	//   - required - When IMDSv2 is required, you must send a session token with any
-	//   instance metadata retrieval requests. In this state, retrieving the IAM role
-	//   credentials always returns IMDSv2 credentials; IMDSv1 credentials are not
-	//   available.
-	// Default: optional
+	// Indicates whether IMDSv2 is required.
+	//   - optional - IMDSv2 is optional, which means that you can use either IMDSv2 or
+	//   IMDSv1.
+	//   - required - IMDSv2 is required, which means that IMDSv1 is disabled, and you
+	//   must use IMDSv2.
 	HttpTokens HttpTokensState
 
 	// Indicates whether access to instance tags from the instance metadata is enabled
@@ -6464,10 +6512,10 @@ type InstanceNetworkInterfaceSpecification struct {
 	// a VPC. The public IP address can only be assigned to a network interface for
 	// eth0, and can only be assigned to a new network interface, not an existing one.
 	// You cannot specify more than one network interface in the request. If launching
-	// into a default subnet, the default value is true . Starting on February 1, 2024,
-	// Amazon Web Services will charge for all public IPv4 addresses, including public
-	// IPv4 addresses associated with running instances and Elastic IP addresses. For
-	// more information, see the Public IPv4 Address tab on the Amazon VPC pricing page (http://aws.amazon.com/vpc/pricing/)
+	// into a default subnet, the default value is true . Amazon Web Services charges
+	// for all public IPv4 addresses, including public IPv4 addresses associated with
+	// running instances and Elastic IP addresses. For more information, see the Public
+	// IPv4 Address tab on the Amazon VPC pricing page (http://aws.amazon.com/vpc/pricing/)
 	// .
 	AssociatePublicIpAddress *bool
 
@@ -6748,6 +6796,27 @@ type InstanceRequirements struct {
 	// Default: hdd and ssd
 	LocalStorageTypes []LocalStorageType
 
+	// [Price protection] The price protection threshold for Spot Instances, as a
+	// percentage of an identified On-Demand price. The identified On-Demand price is
+	// the price of the lowest priced current generation C, M, or R instance type with
+	// your specified attributes. If no current generation C, M, or R instance type
+	// matches your attributes, then the identified price is from the lowest priced
+	// current generation instance types, and failing that, from the lowest priced
+	// previous generation instance types that match your attributes. When Amazon EC2
+	// selects instance types with your attributes, it will exclude instance types
+	// whose price exceeds your specified threshold. The parameter accepts an integer,
+	// which Amazon EC2 interprets as a percentage. If you set DesiredCapacityType to
+	// vcpu or memory-mib , the price protection threshold is based on the per vCPU or
+	// per memory price instead of the per instance price. Only one of
+	// SpotMaxPricePercentageOverLowestPrice or
+	// MaxSpotPriceAsPercentageOfOptimalOnDemandPrice can be specified. If you don't
+	// specify either, Amazon EC2 will automatically apply optimal price protection to
+	// consistently select from a wide range of instance types. To indicate no price
+	// protection threshold for Spot Instances, meaning you want to consider all
+	// instance types that match your attributes, include one of these parameters and
+	// specify a high value, such as 999999 .
+	MaxSpotPriceAsPercentageOfOptimalOnDemandPrice *int32
+
 	// The minimum and maximum amount of memory per vCPU, in GiB. Default: No minimum
 	// or maximum limits
 	MemoryGiBPerVCpu *MemoryGiBPerVCpu
@@ -6763,14 +6832,14 @@ type InstanceRequirements struct {
 	// maximum limits
 	NetworkInterfaceCount *NetworkInterfaceCount
 
-	// The price protection threshold for On-Demand Instances. This is the maximum
-	// you’ll pay for an On-Demand Instance, expressed as a percentage above the least
-	// expensive current generation M, C, or R instance type with your specified
-	// attributes. When Amazon EC2 selects instance types with your attributes, it
-	// excludes instance types priced above your threshold. The parameter accepts an
-	// integer, which Amazon EC2 interprets as a percentage. To turn off price
-	// protection, specify a high value, such as 999999 . This parameter is not
-	// supported for GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
+	// [Price protection] The price protection threshold for On-Demand Instances, as a
+	// percentage higher than an identified On-Demand price. The identified On-Demand
+	// price is the price of the lowest priced current generation C, M, or R instance
+	// type with your specified attributes. When Amazon EC2 selects instance types with
+	// your attributes, it will exclude instance types whose price exceeds your
+	// specified threshold. The parameter accepts an integer, which Amazon EC2
+	// interprets as a percentage. To turn off price protection, specify a high value,
+	// such as 999999 . This parameter is not supported for GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
 	// and GetInstanceTypesFromInstanceRequirements (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetInstanceTypesFromInstanceRequirements.html)
 	// . If you set TargetCapacityUnitType to vcpu or memory-mib , the price protection
 	// threshold is applied based on the per-vCPU or per-memory price instead of the
@@ -6782,18 +6851,27 @@ type InstanceRequirements struct {
 	// . Default: false
 	RequireHibernateSupport *bool
 
-	// The price protection threshold for Spot Instances. This is the maximum you’ll
-	// pay for a Spot Instance, expressed as a percentage above the least expensive
-	// current generation M, C, or R instance type with your specified attributes. When
-	// Amazon EC2 selects instance types with your attributes, it excludes instance
-	// types priced above your threshold. The parameter accepts an integer, which
-	// Amazon EC2 interprets as a percentage. To turn off price protection, specify a
-	// high value, such as 999999 . This parameter is not supported for
-	// GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
+	// [Price protection] The price protection threshold for Spot Instances, as a
+	// percentage higher than an identified Spot price. The identified Spot price is
+	// the Spot price of the lowest priced current generation C, M, or R instance type
+	// with your specified attributes. If no current generation C, M, or R instance
+	// type matches your attributes, then the identified Spot price is from the lowest
+	// priced current generation instance types, and failing that, from the lowest
+	// priced previous generation instance types that match your attributes. When
+	// Amazon EC2 selects instance types with your attributes, it will exclude instance
+	// types whose Spot price exceeds your specified threshold. The parameter accepts
+	// an integer, which Amazon EC2 interprets as a percentage. If you set
+	// TargetCapacityUnitType to vcpu or memory-mib , the price protection threshold is
+	// applied based on the per-vCPU or per-memory price instead of the per-instance
+	// price. This parameter is not supported for GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
 	// and GetInstanceTypesFromInstanceRequirements (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetInstanceTypesFromInstanceRequirements.html)
-	// . If you set TargetCapacityUnitType to vcpu or memory-mib , the price protection
-	// threshold is applied based on the per-vCPU or per-memory price instead of the
-	// per-instance price. Default: 100
+	// . Only one of SpotMaxPricePercentageOverLowestPrice or
+	// MaxSpotPriceAsPercentageOfOptimalOnDemandPrice can be specified. If you don't
+	// specify either, Amazon EC2 will automatically apply optimal price protection to
+	// consistently select from a wide range of instance types. To indicate no price
+	// protection threshold for Spot Instances, meaning you want to consider all
+	// instance types that match your attributes, include one of these parameters and
+	// specify a high value, such as 999999 . Default: 100
 	SpotMaxPricePercentageOverLowestPrice *int32
 
 	// The minimum and maximum amount of total local storage, in GB. Default: No
@@ -6967,6 +7045,27 @@ type InstanceRequirementsRequest struct {
 	// Default: hdd and ssd
 	LocalStorageTypes []LocalStorageType
 
+	// [Price protection] The price protection threshold for Spot Instances, as a
+	// percentage of an identified On-Demand price. The identified On-Demand price is
+	// the price of the lowest priced current generation C, M, or R instance type with
+	// your specified attributes. If no current generation C, M, or R instance type
+	// matches your attributes, then the identified price is from the lowest priced
+	// current generation instance types, and failing that, from the lowest priced
+	// previous generation instance types that match your attributes. When Amazon EC2
+	// selects instance types with your attributes, it will exclude instance types
+	// whose price exceeds your specified threshold. The parameter accepts an integer,
+	// which Amazon EC2 interprets as a percentage. If you set DesiredCapacityType to
+	// vcpu or memory-mib , the price protection threshold is based on the per vCPU or
+	// per memory price instead of the per instance price. Only one of
+	// SpotMaxPricePercentageOverLowestPrice or
+	// MaxSpotPriceAsPercentageOfOptimalOnDemandPrice can be specified. If you don't
+	// specify either, Amazon EC2 will automatically apply optimal price protection to
+	// consistently select from a wide range of instance types. To indicate no price
+	// protection threshold for Spot Instances, meaning you want to consider all
+	// instance types that match your attributes, include one of these parameters and
+	// specify a high value, such as 999999 .
+	MaxSpotPriceAsPercentageOfOptimalOnDemandPrice *int32
+
 	// The minimum and maximum amount of memory per vCPU, in GiB. Default: No minimum
 	// or maximum limits
 	MemoryGiBPerVCpu *MemoryGiBPerVCpuRequest
@@ -6980,14 +7079,15 @@ type InstanceRequirementsRequest struct {
 	// maximum limits
 	NetworkInterfaceCount *NetworkInterfaceCountRequest
 
-	// The price protection threshold for On-Demand Instances. This is the maximum
-	// you’ll pay for an On-Demand Instance, expressed as a percentage above the least
-	// expensive current generation M, C, or R instance type with your specified
-	// attributes. When Amazon EC2 selects instance types with your attributes, it
-	// excludes instance types priced above your threshold. The parameter accepts an
-	// integer, which Amazon EC2 interprets as a percentage. To turn off price
-	// protection, specify a high value, such as 999999 . This parameter is not
-	// supported for GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
+	// [Price protection] The price protection threshold for On-Demand Instances, as a
+	// percentage higher than an identified On-Demand price. The identified On-Demand
+	// price is the price of the lowest priced current generation C, M, or R instance
+	// type with your specified attributes. When Amazon EC2 selects instance types with
+	// your attributes, it will exclude instance types whose price exceeds your
+	// specified threshold. The parameter accepts an integer, which Amazon EC2
+	// interprets as a percentage. To indicate no price protection threshold, specify a
+	// high value, such as 999999 . This parameter is not supported for
+	// GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
 	// and GetInstanceTypesFromInstanceRequirements (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetInstanceTypesFromInstanceRequirements.html)
 	// . If you set TargetCapacityUnitType to vcpu or memory-mib , the price protection
 	// threshold is applied based on the per-vCPU or per-memory price instead of the
@@ -6999,18 +7099,27 @@ type InstanceRequirementsRequest struct {
 	// . Default: false
 	RequireHibernateSupport *bool
 
-	// The price protection threshold for Spot Instance. This is the maximum you’ll
-	// pay for an Spot Instance, expressed as a percentage above the least expensive
-	// current generation M, C, or R instance type with your specified attributes. When
-	// Amazon EC2 selects instance types with your attributes, it excludes instance
-	// types priced above your threshold. The parameter accepts an integer, which
-	// Amazon EC2 interprets as a percentage. To turn off price protection, specify a
-	// high value, such as 999999 . This parameter is not supported for
-	// GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
+	// [Price protection] The price protection threshold for Spot Instances, as a
+	// percentage higher than an identified Spot price. The identified Spot price is
+	// the Spot price of the lowest priced current generation C, M, or R instance type
+	// with your specified attributes. If no current generation C, M, or R instance
+	// type matches your attributes, then the identified Spot price is from the lowest
+	// priced current generation instance types, and failing that, from the lowest
+	// priced previous generation instance types that match your attributes. When
+	// Amazon EC2 selects instance types with your attributes, it will exclude instance
+	// types whose Spot price exceeds your specified threshold. The parameter accepts
+	// an integer, which Amazon EC2 interprets as a percentage. If you set
+	// TargetCapacityUnitType to vcpu or memory-mib , the price protection threshold is
+	// applied based on the per-vCPU or per-memory price instead of the per-instance
+	// price. This parameter is not supported for GetSpotPlacementScores (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetSpotPlacementScores.html)
 	// and GetInstanceTypesFromInstanceRequirements (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_GetInstanceTypesFromInstanceRequirements.html)
-	// . If you set TargetCapacityUnitType to vcpu or memory-mib , the price protection
-	// threshold is applied based on the per-vCPU or per-memory price instead of the
-	// per-instance price. Default: 100
+	// . Only one of SpotMaxPricePercentageOverLowestPrice or
+	// MaxSpotPriceAsPercentageOfOptimalOnDemandPrice can be specified. If you don't
+	// specify either, Amazon EC2 will automatically apply optimal price protection to
+	// consistently select from a wide range of instance types. To indicate no price
+	// protection threshold for Spot Instances, meaning you want to consider all
+	// instance types that match your attributes, include one of these parameters and
+	// specify a high value, such as 999999 . Default: 100
 	SpotMaxPricePercentageOverLowestPrice *int32
 
 	// The minimum and maximum amount of total local storage, in GB. Default: No
@@ -7232,7 +7341,7 @@ type InstanceTopology struct {
 	InstanceType *string
 
 	// The network nodes. The nodes are hashed based on your account. Instances from
-	// different accounts running under the same droplet will return a different hashed
+	// different accounts running under the same server will return a different hashed
 	// list of strings.
 	NetworkNodes []string
 
@@ -7293,11 +7402,17 @@ type InstanceTypeInfo struct {
 	// in the Amazon EC2 User Guide.
 	InstanceType InstanceType
 
+	// Describes the media accelerator settings for the instance type.
+	MediaAcceleratorInfo *MediaAcceleratorInfo
+
 	// Describes the memory for the instance type.
 	MemoryInfo *MemoryInfo
 
 	// Describes the network settings for the instance type.
 	NetworkInfo *NetworkInfo
+
+	// Describes the Neuron accelerator settings for the instance type.
+	NeuronInfo *NeuronInfo
 
 	// Indicates whether Nitro Enclaves is supported.
 	NitroEnclavesSupport NitroEnclavesSupport
@@ -8242,13 +8357,11 @@ type IpamScope struct {
 	noSmithyDocumentSerde
 }
 
-// Describes a set of permissions for a security group rule.
+// Describes the permissions for a security group rule.
 type IpPermission struct {
 
 	// If the protocol is TCP or UDP, this is the start of the port range. If the
-	// protocol is ICMP or ICMPv6, this is the type number. A value of -1 indicates all
-	// ICMP/ICMPv6 types. If you specify all ICMP/ICMPv6 types, you must specify all
-	// ICMP/ICMPv6 codes.
+	// protocol is ICMP or ICMPv6, this is the ICMP type or -1 (all ICMP types).
 	FromPort *int32
 
 	// The IP protocol name ( tcp , udp , icmp , icmpv6 ) or number (see Protocol
@@ -8261,19 +8374,19 @@ type IpPermission struct {
 	// allowed.
 	IpProtocol *string
 
-	// The IPv4 ranges.
+	// The IPv4 address ranges.
 	IpRanges []IpRange
 
-	// The IPv6 ranges.
+	// The IPv6 address ranges.
 	Ipv6Ranges []Ipv6Range
 
 	// The prefix list IDs.
 	PrefixListIds []PrefixListId
 
 	// If the protocol is TCP or UDP, this is the end of the port range. If the
-	// protocol is ICMP or ICMPv6, this is the code. A value of -1 indicates all
-	// ICMP/ICMPv6 codes. If you specify all ICMP/ICMPv6 types, you must specify all
-	// ICMP/ICMPv6 codes.
+	// protocol is ICMP or ICMPv6, this is the ICMP code or -1 (all ICMP codes). If the
+	// start port is -1 (all ICMP types), then the end port must be -1 (all ICMP
+	// codes).
 	ToPort *int32
 
 	// The security group and Amazon Web Services account ID pairs.
@@ -8282,11 +8395,12 @@ type IpPermission struct {
 	noSmithyDocumentSerde
 }
 
-// Describes an IPv4 range.
+// Describes an IPv4 address range.
 type IpRange struct {
 
-	// The IPv4 CIDR range. You can either specify a CIDR range or a source security
-	// group, not both. To specify a single IPv4 address, use the /32 prefix length.
+	// The IPv4 address range. You can either specify a CIDR block or a source
+	// security group, not both. To specify a single IPv4 address, use the /32 prefix
+	// length.
 	CidrIp *string
 
 	// A description for the security group rule that references this IPv4 address
@@ -8394,11 +8508,12 @@ type Ipv6PrefixSpecificationResponse struct {
 	noSmithyDocumentSerde
 }
 
-// Describes an IPv6 range.
+// Describes an IPv6 address range.
 type Ipv6Range struct {
 
-	// The IPv6 CIDR range. You can either specify a CIDR range or a source security
-	// group, not both. To specify a single IPv6 address, use the /128 prefix length.
+	// The IPv6 address range. You can either specify a CIDR block or a source
+	// security group, not both. To specify a single IPv6 address, use the /128 prefix
+	// length.
 	CidrIpv6 *string
 
 	// A description for the security group rule that references this IPv6 address
@@ -8799,8 +8914,8 @@ type LaunchTemplateEbsBlockDeviceRequest struct {
 	//   - standard : 1 - 1024 GiB
 	VolumeSize *int32
 
-	// The volume type. For more information, see Amazon EBS volume types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html)
-	// in the Amazon Elastic Compute Cloud User Guide.
+	// The volume type. For more information, see Amazon EBS volume types (https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html)
+	// in the Amazon EBS User Guide.
 	VolumeType VolumeType
 
 	noSmithyDocumentSerde
@@ -9085,11 +9200,10 @@ type LaunchTemplateInstanceNetworkInterfaceSpecification struct {
 	AssociateCarrierIpAddress *bool
 
 	// Indicates whether to associate a public IPv4 address with eth0 for a new
-	// network interface. Starting on February 1, 2024, Amazon Web Services will charge
-	// for all public IPv4 addresses, including public IPv4 addresses associated with
-	// running instances and Elastic IP addresses. For more information, see the Public
-	// IPv4 Address tab on the Amazon VPC pricing page (http://aws.amazon.com/vpc/pricing/)
-	// .
+	// network interface. Amazon Web Services charges for all public IPv4 addresses,
+	// including public IPv4 addresses associated with running instances and Elastic IP
+	// addresses. For more information, see the Public IPv4 Address tab on the Amazon
+	// VPC pricing page (http://aws.amazon.com/vpc/pricing/) .
 	AssociatePublicIpAddress *bool
 
 	// A security group connection tracking specification that enables you to set the
@@ -9176,11 +9290,11 @@ type LaunchTemplateInstanceNetworkInterfaceSpecificationRequest struct {
 	// in the Wavelength Developer Guide.
 	AssociateCarrierIpAddress *bool
 
-	// Associates a public IPv4 address with eth0 for a new network interface.
-	// Starting on February 1, 2024, Amazon Web Services will charge for all public
-	// IPv4 addresses, including public IPv4 addresses associated with running
-	// instances and Elastic IP addresses. For more information, see the Public IPv4
-	// Address tab on the Amazon VPC pricing page (http://aws.amazon.com/vpc/pricing/) .
+	// Associates a public IPv4 address with eth0 for a new network interface. Amazon
+	// Web Services charges for all public IPv4 addresses, including public IPv4
+	// addresses associated with running instances and Elastic IP addresses. For more
+	// information, see the Public IPv4 Address tab on the Amazon VPC pricing page (http://aws.amazon.com/vpc/pricing/)
+	// .
 	AssociatePublicIpAddress *bool
 
 	// A security group connection tracking specification that enables you to set the
@@ -9323,7 +9437,12 @@ type LaunchTemplateOverrides struct {
 	// The ID of the subnet in which to launch the instances.
 	SubnetId *string
 
-	// The number of units provided by the specified instance type.
+	// The number of units provided by the specified instance type. When specifying
+	// weights, the price used in the lowest-price and price-capacity-optimized
+	// allocation strategies is per unit hour (where the instance price is divided by
+	// the specified weight). However, if all the specified weights are above the
+	// requested TargetCapacity , resulting in only 1 instance being launched, the
+	// price used is per instance hour.
 	WeightedCapacity *float64
 
 	noSmithyDocumentSerde
@@ -9560,11 +9679,10 @@ type LaunchTemplateTagSpecificationRequest struct {
 
 	// The type of resource to tag. Valid Values lists all resource types for Amazon
 	// EC2 that can be tagged. When you create a launch template, you can specify tags
-	// for the following resource types only: instance | volume | elastic-gpu |
-	// network-interface | spot-instances-request . If the instance does not include
-	// the resource type that you specify, the instance launch fails. For example, not
-	// all instance types include an Elastic GPU. To tag a resource after it has been
-	// created, see CreateTags (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTags.html)
+	// for the following resource types only: instance | volume | network-interface |
+	// spot-instances-request . If the instance does not include the resource type that
+	// you specify, the instance launch fails. For example, not all instance types
+	// include a volume. To tag a resource after it has been created, see CreateTags (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTags.html)
 	// .
 	ResourceType ResourceType
 
@@ -9938,6 +10056,19 @@ type LockedSnapshotsInfo struct {
 	noSmithyDocumentSerde
 }
 
+// Information about the EC2 Mac Dedicated Host.
+type MacHost struct {
+
+	// The EC2 Mac Dedicated Host ID.
+	HostId *string
+
+	// The latest macOS versions that the EC2 Mac Dedicated Host can launch without
+	// being upgraded.
+	MacOSLatestSupportedVersions []string
+
+	noSmithyDocumentSerde
+}
+
 // Details for Site-to-Site VPN tunnel endpoint maintenance events.
 type MaintenanceDetails struct {
 
@@ -9986,6 +10117,46 @@ type ManagedPrefixList struct {
 
 	// The version of the prefix list.
 	Version *int64
+
+	noSmithyDocumentSerde
+}
+
+// Describes the media accelerators for the instance type.
+type MediaAcceleratorInfo struct {
+
+	// Describes the media accelerators for the instance type.
+	Accelerators []MediaDeviceInfo
+
+	// The total size of the memory for the media accelerators for the instance type,
+	// in MiB.
+	TotalMediaMemoryInMiB *int32
+
+	noSmithyDocumentSerde
+}
+
+// Describes the media accelerators for the instance type.
+type MediaDeviceInfo struct {
+
+	// The number of media accelerators for the instance type.
+	Count *int32
+
+	// The manufacturer of the media accelerator.
+	Manufacturer *string
+
+	// Describes the memory available to the media accelerator.
+	MemoryInfo *MediaDeviceMemoryInfo
+
+	// The name of the media accelerator.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// Describes the memory available to the media accelerator.
+type MediaDeviceMemoryInfo struct {
+
+	// The size of the memory available to each media accelerator, in MiB.
+	SizeInMiB *int32
 
 	noSmithyDocumentSerde
 }
@@ -10115,15 +10286,14 @@ type ModifyTransitGatewayOptions struct {
 	// Removes CIDR blocks for the transit gateway.
 	RemoveTransitGatewayCidrBlocks []string
 
-	// Enables you to reference a security group across VPCs attached to a transit
-	// gateway (TGW). Use this option to simplify security group management and control
-	// of instance-to-instance traffic across VPCs that are connected by transit
-	// gateway. You can also use this option to migrate from VPC peering (which was the
-	// only option that supported security group referencing) to transit gateways
-	// (which now also support security group referencing). This option is disabled by
-	// default and there are no additional costs to use this feature. For important
-	// information about this feature, see Create a transit gateway (https://docs.aws.amazon.com/vpc/latest/tgw/tgw-transit-gateways.html#create-tgw)
-	// in the Amazon Web Services Transit Gateway Guide.
+	// This parameter is in preview and may not be available for your account. Enables
+	// you to reference a security group across VPCs attached to a transit gateway. Use
+	// this option to simplify security group management and control of
+	// instance-to-instance traffic across VPCs that are connected by transit gateway.
+	// You can also use this option to migrate from VPC peering (which was the only
+	// option that supported security group referencing) to transit gateways (which now
+	// also support security group referencing). This option is disabled by default and
+	// there are no additional costs to use this feature.
 	SecurityGroupReferencingSupport SecurityGroupReferencingSupportValue
 
 	// Enable or disable Equal Cost Multipath Protocol support.
@@ -10146,15 +10316,14 @@ type ModifyTransitGatewayVpcAttachmentRequestOptions struct {
 	// Enable or disable IPv6 support. The default is enable .
 	Ipv6Support Ipv6SupportValue
 
-	// Enables you to reference a security group across VPCs attached to a transit
-	// gateway (TGW). Use this option to simplify security group management and control
-	// of instance-to-instance traffic across VPCs that are connected by transit
-	// gateway. You can also use this option to migrate from VPC peering (which was the
-	// only option that supported security group referencing) to transit gateways
-	// (which now also support security group referencing). This option is disabled by
-	// default and there are no additional costs to use this feature. For important
-	// information about this feature, see Create a transit gateway attachment to a VPC (https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html#create-vpc-attachment)
-	// in the Amazon Web Services Transit Gateway Guide.
+	// This parameter is in preview and may not be available for your account. Enables
+	// you to reference a security group across VPCs attached to a transit gateway. Use
+	// this option to simplify security group management and control of
+	// instance-to-instance traffic across VPCs that are connected by transit gateway.
+	// You can also use this option to migrate from VPC peering (which was the only
+	// option that supported security group referencing) to transit gateways (which now
+	// also support security group referencing). This option is disabled by default and
+	// there are no additional costs to use this feature.
 	SecurityGroupReferencingSupport SecurityGroupReferencingSupportValue
 
 	noSmithyDocumentSerde
@@ -10305,7 +10474,7 @@ type ModifyVpnTunnelOptionsSpecification struct {
 	// the Amazon Web Services side of the VPN connection performs an IKE rekey. The
 	// exact time of the rekey is randomly selected based on the value for
 	// RekeyFuzzPercentage . Constraints: A value between 60 and half of
-	// Phase2LifetimeSeconds . Default: 540
+	// Phase2LifetimeSeconds . Default: 270
 	RekeyMarginTimeSeconds *int32
 
 	// The number of packets in an IKE replay window. Constraints: A value between 64
@@ -11103,6 +11272,58 @@ type NetworkInterfacePrivateIpAddress struct {
 
 	// The private IPv4 address.
 	PrivateIpAddress *string
+
+	noSmithyDocumentSerde
+}
+
+// Describes the cores available to the neuron accelerator.
+type NeuronDeviceCoreInfo struct {
+
+	// The number of cores available to the neuron accelerator.
+	Count *int32
+
+	// The version of the neuron accelerator.
+	Version *int32
+
+	noSmithyDocumentSerde
+}
+
+// Describes the neuron accelerators for the instance type.
+type NeuronDeviceInfo struct {
+
+	// Describes the cores available to each neuron accelerator.
+	CoreInfo *NeuronDeviceCoreInfo
+
+	// The number of neuron accelerators for the instance type.
+	Count *int32
+
+	// Describes the memory available to each neuron accelerator.
+	MemoryInfo *NeuronDeviceMemoryInfo
+
+	// The name of the neuron accelerator.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// Describes the memory available to the neuron accelerator.
+type NeuronDeviceMemoryInfo struct {
+
+	// The size of the memory available to the neuron accelerator, in MiB.
+	SizeInMiB *int32
+
+	noSmithyDocumentSerde
+}
+
+// Describes the neuron accelerators for the instance type.
+type NeuronInfo struct {
+
+	// Describes the neuron accelerators for the instance type.
+	NeuronDevices []NeuronDeviceInfo
+
+	// The total size of the memory for the neuron accelerators for the instance type,
+	// in MiB.
+	TotalNeuronDeviceMemoryInMiB *int32
 
 	noSmithyDocumentSerde
 }
@@ -12344,7 +12565,9 @@ type RequestLaunchTemplateData struct {
 	// apply when using an EBS-optimized instance.
 	EbsOptimized *bool
 
-	// An elastic GPU to associate with the instance.
+	// Deprecated. Amazon Elastic Graphics reached end of life on January 8, 2024. For
+	// workloads that require graphics acceleration, we recommend that you use Amazon
+	// EC2 G4ad, G4dn, or G5 instances.
 	ElasticGpuSpecifications []ElasticGpuSpecification
 
 	// An elastic inference accelerator to associate with the instance. Elastic
@@ -12981,7 +13204,9 @@ type ResponseLaunchTemplateData struct {
 	// Indicates whether the instance is optimized for Amazon EBS I/O.
 	EbsOptimized *bool
 
-	// The elastic GPU specification.
+	// Deprecated. Amazon Elastic Graphics reached end of life on January 8, 2024. For
+	// workloads that require graphics acceleration, we recommend that you use Amazon
+	// EC2 G4ad, G4dn, or G5 instances.
 	ElasticGpuSpecifications []ElasticGpuSpecificationResponse
 
 	// An elastic inference accelerator to associate with the instance. Elastic
@@ -13596,7 +13821,11 @@ type ScheduledInstancesNetworkInterface struct {
 	// VPC. The public IPv4 address can only be assigned to a network interface for
 	// eth0, and can only be assigned to a new network interface, not an existing one.
 	// You cannot specify more than one network interface in the request. If launching
-	// into a default subnet, the default value is true .
+	// into a default subnet, the default value is true . Amazon Web Services charges
+	// for all public IPv4 addresses, including public IPv4 addresses associated with
+	// running instances and Elastic IP addresses. For more information, see the Public
+	// IPv4 Address tab on the Amazon VPC pricing page (http://aws.amazon.com/vpc/pricing/)
+	// .
 	AssociatePublicIpAddress *bool
 
 	// Indicates whether to delete the interface when the instance is terminated.
@@ -13736,15 +13965,13 @@ type SecurityGroupReference struct {
 	// The ID of the VPC with the referencing security group.
 	ReferencingVpcId *string
 
-	// The ID of the transit gateway (if applicable). For more information about
-	// security group referencing for transit gateways, see Create a transit gateway
-	// attachment to a VPC (https://docs.aws.amazon.com/tgw/tgw-vpc-attachments.html#create-vpc-attachment)
-	// in the Amazon Web Services Transit Gateway Guide.
+	// This parameter is in preview and may not be available for your account. The ID
+	// of the transit gateway (if applicable).
 	TransitGatewayId *string
 
 	// The ID of the VPC peering connection (if applicable). For more information
 	// about security group referencing for peering connections, see Update your
-	// security groups to reference peer security groups (https://docs.aws.amazon.com/peering/vpc-peering-security-groups.html)
+	// security groups to reference peer security groups (https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-security-groups.html)
 	// in the VPC Peering Guide.
 	VpcPeeringConnectionId *string
 
@@ -13764,9 +13991,7 @@ type SecurityGroupRule struct {
 	Description *string
 
 	// If the protocol is TCP or UDP, this is the start of the port range. If the
-	// protocol is ICMP or ICMPv6, this is the type number. A value of -1 indicates all
-	// ICMP/ICMPv6 types. If you specify all ICMP/ICMPv6 types, you must specify all
-	// ICMP/ICMPv6 codes.
+	// protocol is ICMP or ICMPv6, this is the ICMP type or -1 (all ICMP types).
 	FromPort *int32
 
 	// The ID of the security group.
@@ -13796,9 +14021,9 @@ type SecurityGroupRule struct {
 	Tags []Tag
 
 	// If the protocol is TCP or UDP, this is the end of the port range. If the
-	// protocol is ICMP or ICMPv6, this is the type number. A value of -1 indicates all
-	// ICMP/ICMPv6 codes. If you specify all ICMP/ICMPv6 types, you must specify all
-	// ICMP/ICMPv6 codes.
+	// protocol is ICMP or ICMPv6, this is the ICMP code or -1 (all ICMP codes). If the
+	// start port is -1 (all ICMP types), then the end port must be -1 (all ICMP
+	// codes).
 	ToPort *int32
 
 	noSmithyDocumentSerde
@@ -13842,9 +14067,7 @@ type SecurityGroupRuleRequest struct {
 	Description *string
 
 	// If the protocol is TCP or UDP, this is the start of the port range. If the
-	// protocol is ICMP or ICMPv6, this is the type number. A value of -1 indicates all
-	// ICMP/ICMPv6 types. If you specify all ICMP/ICMPv6 types, you must specify all
-	// ICMP/ICMPv6 codes.
+	// protocol is ICMP or ICMPv6, this is the ICMP type or -1 (all ICMP types).
 	FromPort *int32
 
 	// The IP protocol name ( tcp , udp , icmp , icmpv6 ) or number (see Protocol
@@ -13859,9 +14082,9 @@ type SecurityGroupRuleRequest struct {
 	ReferencedGroupId *string
 
 	// If the protocol is TCP or UDP, this is the end of the port range. If the
-	// protocol is ICMP or ICMPv6, this is the code. A value of -1 indicates all
-	// ICMP/ICMPv6 codes. If you specify all ICMP/ICMPv6 types, you must specify all
-	// ICMP/ICMPv6 codes.
+	// protocol is ICMP or ICMPv6, this is the ICMP code or -1 (all ICMP codes). If the
+	// start port is -1 (all ICMP types), then the end port must be -1 (all ICMP
+	// codes).
 	ToPort *int32
 
 	noSmithyDocumentSerde
@@ -14050,8 +14273,8 @@ type Snapshot struct {
 	KmsKeyId *string
 
 	// The ARN of the Outpost on which the snapshot is stored. For more information,
-	// see Amazon EBS local snapshots on Outposts (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snapshots-outposts.html)
-	// in the Amazon Elastic Compute Cloud User Guide.
+	// see Amazon EBS local snapshots on Outposts (https://docs.aws.amazon.com/ebs/latest/userguide/snapshots-outposts.html)
+	// in the Amazon EBS User Guide.
 	OutpostArn *string
 
 	// The Amazon Web Services owner alias, from an Amazon-maintained list ( amazon ).
@@ -14175,8 +14398,8 @@ type SnapshotInfo struct {
 	Encrypted *bool
 
 	// The ARN of the Outpost on which the snapshot is stored. For more information,
-	// see Amazon EBS local snapshots on Outposts (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snapshots-outposts.html)
-	// in the Amazon Elastic Compute Cloud User Guide.
+	// see Amazon EBS local snapshots on Outposts (https://docs.aws.amazon.com/ebs/latest/userguide/snapshots-outposts.html)
+	// in the Amazon EBS User Guide.
 	OutpostArn *string
 
 	// Account id used when creating this snapshot.
@@ -14590,7 +14813,10 @@ type SpotFleetRequestConfigData struct {
 
 	// The launch specifications for the Spot Fleet request. If you specify
 	// LaunchSpecifications , you can't specify LaunchTemplateConfigs . If you include
-	// On-Demand capacity in your request, you must use LaunchTemplateConfigs .
+	// On-Demand capacity in your request, you must use LaunchTemplateConfigs . If an
+	// AMI specified in a launch specification is deregistered or disabled, no new
+	// instances can be launched from the AMI. For fleets of type maintain , the target
+	// capacity will not be maintained.
 	LaunchSpecifications []SpotFleetLaunchSpecification
 
 	// The launch template and overrides. If you specify LaunchTemplateConfigs , you
@@ -14679,8 +14905,8 @@ type SpotFleetRequestConfigData struct {
 	// .
 	TagSpecifications []TagSpecification
 
-	// The unit for the target capacity. TargetCapacityUnitType can only be specified
-	// when InstanceRequirements is specified. Default: units (translates to number of
+	// The unit for the target capacity. You can specify this parameter only when
+	// using attribute-based instance type selection. Default: units (the number of
 	// instances)
 	TargetCapacityUnitType TargetCapacityUnitType
 
@@ -15134,11 +15360,11 @@ type SpotPrice struct {
 // Describes a stale rule in a security group.
 type StaleIpPermission struct {
 
-	// The start of the port range for the TCP and UDP protocols, or an ICMP type
-	// number. A value of -1 indicates all ICMP types.
+	// If the protocol is TCP or UDP, this is the start of the port range. If the
+	// protocol is ICMP or ICMPv6, this is the ICMP type or -1 (all ICMP types).
 	FromPort *int32
 
-	// The IP protocol name (for tcp , udp , and icmp ) or number (see Protocol
+	// The IP protocol name ( tcp , udp , icmp , icmpv6 ) or number (see Protocol
 	// Numbers) (http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml)
 	// .
 	IpProtocol *string
@@ -15149,8 +15375,8 @@ type StaleIpPermission struct {
 	// The prefix list IDs. Not applicable for stale security group rules.
 	PrefixListIds []string
 
-	// The end of the port range for the TCP and UDP protocols, or an ICMP type
-	// number. A value of -1 indicates all ICMP types.
+	// If the protocol is TCP or UDP, this is the end of the port range. If the
+	// protocol is ICMP or ICMPv6, this is the ICMP code or -1 (all ICMP codes).
 	ToPort *int32
 
 	// The security group pairs. Returns the ID of the referenced security group and
@@ -15203,8 +15429,8 @@ type StateReason struct {
 	//   - Server.SpotInstanceTermination : The instance was terminated because the
 	//   number of Spot requests with a maximum price equal to or higher than the Spot
 	//   price exceeded available capacity or because of an increase in the Spot price.
-	//   - Client.InstanceInitiatedShutdown : The instance was shut down using the
-	//   shutdown -h command from the instance.
+	//   - Client.InstanceInitiatedShutdown : The instance was shut down from the
+	//   operating system of the instance.
 	//   - Client.InstanceTerminated : The instance was terminated or rebooted during
 	//   AMI creation.
 	//   - Client.InternalError : A client error caused the instance to terminate
@@ -15317,7 +15543,10 @@ type Subnet struct {
 	MapCustomerOwnedIpOnLaunch *bool
 
 	// Indicates whether instances launched in this subnet receive a public IPv4
-	// address.
+	// address. Amazon Web Services charges for all public IPv4 addresses, including
+	// public IPv4 addresses associated with running instances and Elastic IP
+	// addresses. For more information, see the Public IPv4 Address tab on the Amazon
+	// VPC pricing page (http://aws.amazon.com/vpc/pricing/) .
 	MapPublicIpOnLaunch *bool
 
 	// The Amazon Resource Name (ARN) of the Outpost.
@@ -15544,7 +15773,7 @@ type TagSpecification struct {
 // .
 type TargetCapacitySpecification struct {
 
-	// The default TotalTargetCapacity , which is either Spot or On-Demand .
+	// The default target capacity type.
 	DefaultTargetCapacityType DefaultTargetCapacityType
 
 	// The number of On-Demand units to request. If you specify a target capacity for
@@ -15555,12 +15784,10 @@ type TargetCapacitySpecification struct {
 	// for On-Demand units, you cannot specify a target capacity for Spot units.
 	SpotTargetCapacity *int32
 
-	// The unit for the target capacity. TargetCapacityUnitType can only be specified
-	// when InstanceRequirements is specified. Default: units (translates to number of
-	// instances)
+	// The unit for the target capacity.
 	TargetCapacityUnitType TargetCapacityUnitType
 
-	// The number of units to request, filled using DefaultTargetCapacityType .
+	// The number of units to request, filled the default target capacity type.
 	TotalTargetCapacity *int32
 
 	noSmithyDocumentSerde
@@ -15576,18 +15803,18 @@ type TargetCapacitySpecification struct {
 // set a maximum price per hour for the On-Demand Instances and Spot Instances in
 // your request, EC2 Fleet will launch instances until it reaches the maximum
 // amount that you're willing to pay. When the maximum amount you're willing to pay
-// is reached, the fleet stops launching instances even if it hasn’t met the target
+// is reached, the fleet stops launching instances even if it hasn't met the target
 // capacity. The MaxTotalPrice parameters are located in OnDemandOptionsRequest (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_OnDemandOptionsRequest)
 // and SpotOptionsRequest (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotOptionsRequest)
 // .
 type TargetCapacitySpecificationRequest struct {
 
-	// The number of units to request, filled using DefaultTargetCapacityType .
+	// The number of units to request, filled using the default target capacity type.
 	//
 	// This member is required.
 	TotalTargetCapacity *int32
 
-	// The default TotalTargetCapacity , which is either Spot or On-Demand .
+	// The default target capacity type.
 	DefaultTargetCapacityType DefaultTargetCapacityType
 
 	// The number of On-Demand units to request.
@@ -15596,8 +15823,8 @@ type TargetCapacitySpecificationRequest struct {
 	// The number of Spot units to request.
 	SpotTargetCapacity *int32
 
-	// The unit for the target capacity. TargetCapacityUnitType can only be specified
-	// when InstanceRequirements is specified. Default: units (translates to number of
+	// The unit for the target capacity. You can specify this parameter only when
+	// using attributed-based instance type selection. Default: units (the number of
 	// instances)
 	TargetCapacityUnitType TargetCapacityUnitType
 
@@ -16366,15 +16593,14 @@ type TransitGatewayOptions struct {
 	// The ID of the default propagation route table.
 	PropagationDefaultRouteTableId *string
 
-	// Enables you to reference a security group across VPCs attached to a transit
-	// gateway (TGW). Use this option to simplify security group management and control
-	// of instance-to-instance traffic across VPCs that are connected by transit
-	// gateway. You can also use this option to migrate from VPC peering (which was the
-	// only option that supported security group referencing) to transit gateways
-	// (which now also support security group referencing). This option is disabled by
-	// default and there are no additional costs to use this feature. For important
-	// information about this feature, see Create a transit gateway (https://docs.aws.amazon.com/vpc/latest/tgw/tgw-transit-gateways.html#create-tgw)
-	// in the Amazon Web Services Transit Gateway Guide.
+	// This parameter is in preview and may not be available for your account. Enables
+	// you to reference a security group across VPCs attached to a transit gateway. Use
+	// this option to simplify security group management and control of
+	// instance-to-instance traffic across VPCs that are connected by transit gateway.
+	// You can also use this option to migrate from VPC peering (which was the only
+	// option that supported security group referencing) to transit gateways (which now
+	// also support security group referencing). This option is disabled by default and
+	// there are no additional costs to use this feature.
 	SecurityGroupReferencingSupport SecurityGroupReferencingSupportValue
 
 	// The transit gateway CIDR blocks.
@@ -16614,15 +16840,14 @@ type TransitGatewayRequestOptions struct {
 	// Indicates whether multicast is enabled on the transit gateway
 	MulticastSupport MulticastSupportValue
 
-	// Enables you to reference a security group across VPCs attached to a transit
-	// gateway (TGW). Use this option to simplify security group management and control
-	// of instance-to-instance traffic across VPCs that are connected by transit
-	// gateway. You can also use this option to migrate from VPC peering (which was the
-	// only option that supported security group referencing) to transit gateways
-	// (which now also support security group referencing). This option is disabled by
-	// default and there are no additional costs to use this feature. For important
-	// information about this feature, see Create a transit gateway (https://docs.aws.amazon.com/vpc/latest/tgw/tgw-transit-gateways.html#create-tgw)
-	// in the Amazon Web Services Transit Gateway Guide.
+	// This parameter is in preview and may not be available for your account. Enables
+	// you to reference a security group across VPCs attached to a transit gateway. Use
+	// this option to simplify security group management and control of
+	// instance-to-instance traffic across VPCs that are connected by transit gateway.
+	// You can also use this option to migrate from VPC peering (which was the only
+	// option that supported security group referencing) to transit gateways (which now
+	// also support security group referencing). This option is disabled by default and
+	// there are no additional costs to use this feature.
 	SecurityGroupReferencingSupport SecurityGroupReferencingSupportValue
 
 	// One or more IPv4 or IPv6 CIDR blocks for the transit gateway. Must be a size
@@ -16857,9 +17082,14 @@ type TransitGatewayVpcAttachmentOptions struct {
 	// Indicates whether IPv6 support is disabled.
 	Ipv6Support Ipv6SupportValue
 
-	// For important information about this feature, see Create a transit gateway
-	// attachment to a VPC (https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html#create-vpc-attachment)
-	// in the Amazon Web Services Transit Gateway Guide.
+	// This parameter is in preview and may not be available for your account. Enables
+	// you to reference a security group across VPCs attached to a transit gateway. Use
+	// this option to simplify security group management and control of
+	// instance-to-instance traffic across VPCs that are connected by transit gateway.
+	// You can also use this option to migrate from VPC peering (which was the only
+	// option that supported security group referencing) to transit gateways (which now
+	// also support security group referencing). This option is disabled by default and
+	// there are no additional costs to use this feature.
 	SecurityGroupReferencingSupport SecurityGroupReferencingSupportValue
 
 	noSmithyDocumentSerde
@@ -17699,17 +17929,27 @@ type Volume struct {
 // Describes volume attachment details.
 type VolumeAttachment struct {
 
+	// The ARN of the Amazon ECS or Fargate task to which the volume is attached.
+	AssociatedResource *string
+
 	// The time stamp when the attachment initiated.
 	AttachTime *time.Time
 
 	// Indicates whether the EBS volume is deleted on instance termination.
 	DeleteOnTermination *bool
 
-	// The device name.
+	// The device name. If the volume is attached to a Fargate task, this parameter
+	// returns null .
 	Device *string
 
-	// The ID of the instance.
+	// The ID of the instance. If the volume is attached to a Fargate task, this
+	// parameter returns null .
 	InstanceId *string
+
+	// The service principal of Amazon Web Services service that owns the underlying
+	// instance to which the volume is attached. This parameter is returned only for
+	// volumes that are attached to Fargate tasks.
+	InstanceOwningService *string
 
 	// The attachment state of the volume.
 	State VolumeAttachmentState
@@ -18487,7 +18727,7 @@ type VpnTunnelOptionsSpecification struct {
 	// the Amazon Web Services side of the VPN connection performs an IKE rekey. The
 	// exact time of the rekey is randomly selected based on the value for
 	// RekeyFuzzPercentage . Constraints: A value between 60 and half of
-	// Phase2LifetimeSeconds . Default: 540
+	// Phase2LifetimeSeconds . Default: 270
 	RekeyMarginTimeSeconds *int32
 
 	// The number of packets in an IKE replay window. Constraints: A value between 64

@@ -582,6 +582,7 @@ const (
 	AvailabilityZoneStateInformation AvailabilityZoneState = "information"
 	AvailabilityZoneStateImpaired    AvailabilityZoneState = "impaired"
 	AvailabilityZoneStateUnavailable AvailabilityZoneState = "unavailable"
+	AvailabilityZoneStateConstrained AvailabilityZoneState = "constrained"
 )
 
 // Values returns all known values for AvailabilityZoneState. Note that this can
@@ -593,6 +594,7 @@ func (AvailabilityZoneState) Values() []AvailabilityZoneState {
 		"information",
 		"impaired",
 		"unavailable",
+		"constrained",
 	}
 }
 
@@ -1321,6 +1323,48 @@ func (DatafeedSubscriptionState) Values() []DatafeedSubscriptionState {
 	return []DatafeedSubscriptionState{
 		"Active",
 		"Inactive",
+	}
+}
+
+type DefaultInstanceMetadataEndpointState string
+
+// Enum values for DefaultInstanceMetadataEndpointState
+const (
+	DefaultInstanceMetadataEndpointStateDisabled     DefaultInstanceMetadataEndpointState = "disabled"
+	DefaultInstanceMetadataEndpointStateEnabled      DefaultInstanceMetadataEndpointState = "enabled"
+	DefaultInstanceMetadataEndpointStateNoPreference DefaultInstanceMetadataEndpointState = "no-preference"
+)
+
+// Values returns all known values for DefaultInstanceMetadataEndpointState. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client. The ordering of this slice is not guaranteed to be stable across
+// updates.
+func (DefaultInstanceMetadataEndpointState) Values() []DefaultInstanceMetadataEndpointState {
+	return []DefaultInstanceMetadataEndpointState{
+		"disabled",
+		"enabled",
+		"no-preference",
+	}
+}
+
+type DefaultInstanceMetadataTagsState string
+
+// Enum values for DefaultInstanceMetadataTagsState
+const (
+	DefaultInstanceMetadataTagsStateDisabled     DefaultInstanceMetadataTagsState = "disabled"
+	DefaultInstanceMetadataTagsStateEnabled      DefaultInstanceMetadataTagsState = "enabled"
+	DefaultInstanceMetadataTagsStateNoPreference DefaultInstanceMetadataTagsState = "no-preference"
+)
+
+// Values returns all known values for DefaultInstanceMetadataTagsState. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client. The ordering of this slice is not guaranteed to be stable across
+// updates.
+func (DefaultInstanceMetadataTagsState) Values() []DefaultInstanceMetadataTagsState {
+	return []DefaultInstanceMetadataTagsState{
+		"disabled",
+		"enabled",
+		"no-preference",
 	}
 }
 
@@ -3699,6 +3743,9 @@ const (
 	InstanceTypeR7iMetal48xl    InstanceType = "r7i.metal-48xl"
 	InstanceTypeR7izMetal16xl   InstanceType = "r7iz.metal-16xl"
 	InstanceTypeR7izMetal32xl   InstanceType = "r7iz.metal-32xl"
+	InstanceTypeC7gdMetal       InstanceType = "c7gd.metal"
+	InstanceTypeM7gdMetal       InstanceType = "m7gd.metal"
+	InstanceTypeR7gdMetal       InstanceType = "r7gd.metal"
 )
 
 // Values returns all known values for InstanceType. Note that this can be
@@ -4489,6 +4536,9 @@ func (InstanceType) Values() []InstanceType {
 		"r7i.metal-48xl",
 		"r7iz.metal-16xl",
 		"r7iz.metal-32xl",
+		"c7gd.metal",
+		"m7gd.metal",
+		"r7gd.metal",
 	}
 }
 
@@ -5588,6 +5638,27 @@ func (MembershipType) Values() []MembershipType {
 	return []MembershipType{
 		"static",
 		"igmp",
+	}
+}
+
+type MetadataDefaultHttpTokensState string
+
+// Enum values for MetadataDefaultHttpTokensState
+const (
+	MetadataDefaultHttpTokensStateOptional     MetadataDefaultHttpTokensState = "optional"
+	MetadataDefaultHttpTokensStateRequired     MetadataDefaultHttpTokensState = "required"
+	MetadataDefaultHttpTokensStateNoPreference MetadataDefaultHttpTokensState = "no-preference"
+)
+
+// Values returns all known values for MetadataDefaultHttpTokensState. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client. The ordering of this slice is not guaranteed to be stable across
+// updates.
+func (MetadataDefaultHttpTokensState) Values() []MetadataDefaultHttpTokensState {
+	return []MetadataDefaultHttpTokensState{
+		"optional",
+		"required",
+		"no-preference",
 	}
 }
 
@@ -7292,8 +7363,9 @@ type SubnetState string
 
 // Enum values for SubnetState
 const (
-	SubnetStatePending   SubnetState = "pending"
-	SubnetStateAvailable SubnetState = "available"
+	SubnetStatePending     SubnetState = "pending"
+	SubnetStateAvailable   SubnetState = "available"
+	SubnetStateUnavailable SubnetState = "unavailable"
 )
 
 // Values returns all known values for SubnetState. Note that this can be expanded
@@ -7303,6 +7375,7 @@ func (SubnetState) Values() []SubnetState {
 	return []SubnetState{
 		"pending",
 		"available",
+		"unavailable",
 	}
 }
 

@@ -93,11 +93,13 @@ func (s *server) serve() error {
 	serve := func(lis net.Listener) {
 		defer wg.Done()
 		err := s.grpcServer.Serve(lis)
-		s.bgpServer.logger.Warn("accept failed",
-			log.Fields{
-				"Topic": "grpc",
-				"Key":   lis,
-				"Error": err})
+		if err != nil {
+			s.bgpServer.logger.Warn("accept failed",
+				log.Fields{
+					"Topic": "grpc",
+					"Key":   lis.Addr().String(),
+					"Error": err})
+		}
 	}
 
 	for _, lis := range l {
@@ -181,6 +183,21 @@ func toPathAPI(binNlri []byte, binPattrs [][]byte, anyNlri *apb.Any, anyPattrs [
 		LocalIdentifier:    nlri.PathLocalIdentifier(),
 		NlriBinary:         binNlri,
 		PattrsBinary:       binPattrs,
+	}
+	if s := path.GetSource(); s != nil {
+		p.SourceAsn = s.AS
+		p.SourceId = s.ID.String()
+		p.NeighborIp = s.Address.String()
+	}
+	return p
+}
+
+func eorToPathAPI(path *table.Path) *api.Path {
+	nlri := path.GetNlri()
+	p := &api.Path{
+		Age:        tspb.New(path.GetTimestamp()),
+		IsWithdraw: path.IsWithdraw,
+		Family:     &api.Family{Afi: api.Family_Afi(nlri.AFI()), Safi: api.Family_Safi(nlri.SAFI())},
 	}
 	if s := path.GetSource(); s != nil {
 		p.SourceAsn = s.AS
