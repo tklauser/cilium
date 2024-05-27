@@ -122,6 +122,7 @@ type RunInstancesRequest struct {
 	Isp                                      string                          `position:"Query" name:"Isp"`
 	KeyPairName                              string                          `position:"Query" name:"KeyPairName"`
 	SpotPriceLimit                           requests.Float                  `position:"Query" name:"SpotPriceLimit"`
+	CpuOptionsTopologyType                   string                          `position:"Query" name:"CpuOptions.TopologyType"`
 	StorageSetPartitionNumber                requests.Integer                `position:"Query" name:"StorageSetPartitionNumber"`
 	Tag                                      *[]RunInstancesTag              `position:"Query" name:"Tag"  type:"Repeated"`
 	PrivatePoolOptionsId                     string                          `position:"Query" name:"PrivatePoolOptions.Id"`
@@ -130,6 +131,7 @@ type RunInstancesRequest struct {
 	Ipv6AddressCount                         requests.Integer                `position:"Query" name:"Ipv6AddressCount"`
 	HostNames                                *[]string                       `position:"Query" name:"HostNames"  type:"Repeated"`
 	CapacityReservationPreference            string                          `position:"Query" name:"CapacityReservationPreference"`
+	AdditionalInfo                           RunInstancesAdditionalInfo      `position:"Query" name:"AdditionalInfo"  type:"Struct"`
 	VSwitchId                                string                          `position:"Query" name:"VSwitchId"`
 	InstanceName                             string                          `position:"Query" name:"InstanceName"`
 	ZoneId                                   string                          `position:"Query" name:"ZoneId"`
@@ -202,6 +204,11 @@ type RunInstancesTag struct {
 	Value string `name:"Value"`
 }
 
+// RunInstancesAdditionalInfo is a repeated param struct in RunInstancesRequest
+type RunInstancesAdditionalInfo struct {
+	PvdConfig string `name:"PvdConfig"`
+}
+
 // RunInstancesNetworkInterface is a repeated param struct in RunInstancesRequest
 type RunInstancesNetworkInterface struct {
 	VSwitchId                   string    `name:"VSwitchId"`
@@ -219,6 +226,8 @@ type RunInstancesNetworkInterface struct {
 	NetworkCardIndex            string    `name:"NetworkCardIndex"`
 	DeleteOnRelease             string    `name:"DeleteOnRelease"`
 	NetworkInterfaceId          string    `name:"NetworkInterfaceId"`
+	RxQueueSize                 string    `name:"RxQueueSize"`
+	TxQueueSize                 string    `name:"TxQueueSize"`
 }
 
 // RunInstancesDataDisk is a repeated param struct in RunInstancesRequest
