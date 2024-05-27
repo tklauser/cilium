@@ -26,7 +26,12 @@ type kconfigMeta struct {
 	Offset uint32
 }
 
-type kfuncMeta struct{}
+type kfuncMetaKey struct{}
+
+type kfuncMeta struct {
+	Binding elf.SymBind
+	Func    *btf.Func
+}
 
 // elfCode is a convenience to reduce the amount of arguments that have to
 // be passed around explicitly. You should treat its contents as immutable.
@@ -457,6 +462,8 @@ func jumpTarget(offset uint64, ins asm.Instruction) uint64 {
 	return uint64(dest)
 }
 
+var errUnsupportedBinding = errors.New("unsupported binding")
+
 func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) error {
 	var (
 		typ  = elf.ST_TYPE(rel.Info)
@@ -473,7 +480,7 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 		}
 
 		if bind != elf.STB_GLOBAL {
-			return fmt.Errorf("map %q: unsupported relocation %s", name, bind)
+			return fmt.Errorf("map %q: %w: %s", name, errUnsupportedBinding, bind)
 		}
 
 		if typ != elf.STT_OBJECT && typ != elf.STT_NOTYPE {
@@ -489,7 +496,7 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 		switch typ {
 		case elf.STT_SECTION:
 			if bind != elf.STB_LOCAL {
-				return fmt.Errorf("direct load: %s: unsupported section relocation %s", name, bind)
+				return fmt.Errorf("direct load: %s: %w: %s", name, errUnsupportedBinding, bind)
 			}
 
 			// This is really a reference to a static symbol, which clang doesn't
@@ -500,7 +507,7 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 		case elf.STT_OBJECT:
 			// LLVM 9 emits OBJECT-LOCAL symbols for anonymous constants.
 			if bind != elf.STB_GLOBAL && bind != elf.STB_LOCAL {
-				return fmt.Errorf("direct load: %s: unsupported object relocation %s", name, bind)
+				return fmt.Errorf("direct load: %s: %w: %s", name, errUnsupportedBinding, bind)
 			}
 
 			offset = uint32(rel.Value)
@@ -508,7 +515,7 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 		case elf.STT_NOTYPE:
 			// LLVM 7 emits NOTYPE-LOCAL symbols for anonymous constants.
 			if bind != elf.STB_LOCAL {
-				return fmt.Errorf("direct load: %s: unsupported untyped relocation %s", name, bind)
+				return fmt.Errorf("direct load: %s: %w: %s", name, errUnsupportedBinding, bind)
 			}
 
 			offset = uint32(rel.Value)
@@ -536,12 +543,12 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 			switch typ {
 			case elf.STT_NOTYPE, elf.STT_FUNC:
 				if bind != elf.STB_GLOBAL {
-					return fmt.Errorf("call: %s: unsupported binding: %s", name, bind)
+					return fmt.Errorf("call: %s: %w: %s", name, errUnsupportedBinding, bind)
 				}
 
 			case elf.STT_SECTION:
 				if bind != elf.STB_LOCAL {
-					return fmt.Errorf("call: %s: unsupported binding: %s", name, bind)
+					return fmt.Errorf("call: %s: %w: %s", name, errUnsupportedBinding, bind)
 				}
 
 				// The function we want to call is in the indicated section,
@@ -564,12 +571,12 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 			switch typ {
 			case elf.STT_FUNC:
 				if bind != elf.STB_GLOBAL {
-					return fmt.Errorf("load: %s: unsupported binding: %s", name, bind)
+					return fmt.Errorf("load: %s: %w: %s", name, errUnsupportedBinding, bind)
 				}
 
 			case elf.STT_SECTION:
 				if bind != elf.STB_LOCAL {
-					return fmt.Errorf("load: %s: unsupported binding: %s", name, bind)
+					return fmt.Errorf("load: %s: %w: %s", name, errUnsupportedBinding, bind)
 				}
 
 				// ins.Constant already contains the offset in bytes from the
@@ -598,8 +605,8 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 	// function declarations, as well as extern kfunc declarations using __ksym
 	// and extern kconfig variables declared using __kconfig.
 	case undefSection:
-		if bind != elf.STB_GLOBAL {
-			return fmt.Errorf("asm relocation: %s: unsupported binding: %s", name, bind)
+		if bind != elf.STB_GLOBAL && bind != elf.STB_WEAK {
+			return fmt.Errorf("asm relocation: %s: %w: %s", name, errUnsupportedBinding, bind)
 		}
 
 		if typ != elf.STT_NOTYPE {
@@ -608,12 +615,24 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 
 		kf := ec.kfuncs[name]
 		switch {
-		// If a Call instruction is found and the datasec has a btf.Func with a Name
-		// that matches the symbol name we mark the instruction as a call to a kfunc.
+		// If a Call / DWordLoad instruction is found and the datasec has a btf.Func with a Name
+		// that matches the symbol name we mark the instruction as a referencing a kfunc.
 		case kf != nil && ins.OpCode.JumpOp() == asm.Call:
-			ins.Metadata.Set(kfuncMeta{}, kf)
+			ins.Metadata.Set(kfuncMetaKey{}, &kfuncMeta{
+				Func:    kf,
+				Binding: bind,
+			})
+
 			ins.Src = asm.PseudoKfuncCall
 			ins.Constant = -1
+
+		case kf != nil && ins.OpCode.IsDWordLoad():
+			ins.Metadata.Set(kfuncMetaKey{}, &kfuncMeta{
+				Func:    kf,
+				Binding: bind,
+			})
+
+			ins.Constant = 0
 
 		// If no kconfig map is found, this must be a symbol reference from inline
 		// asm (see testdata/loader.c:asm_relocation()) or a call to a forward
@@ -624,6 +643,10 @@ func (ec *elfCode) relocateInstruction(ins *asm.Instruction, rel elf.Symbol) err
 		// require it to contain the symbol to disambiguate between inline asm
 		// relos and kconfigs.
 		case ec.kconfig != nil && ins.OpCode.IsDWordLoad():
+			if bind != elf.STB_GLOBAL {
+				return fmt.Errorf("asm relocation: %s: %w: %s", name, errUnsupportedBinding, bind)
+			}
+
 			for _, vsi := range ec.kconfig.Value.(*btf.Datasec).Vars {
 				if vsi.Type.(*btf.Var).Name != rel.Name {
 					continue

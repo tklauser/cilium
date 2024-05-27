@@ -25,6 +25,9 @@ const (
 	PerfEventType     = sys.BPF_LINK_TYPE_PERF_EVENT
 	KprobeMultiType   = sys.BPF_LINK_TYPE_KPROBE_MULTI
 	TCXType           = sys.BPF_LINK_TYPE_TCX
+	UprobeMultiType   = sys.BPF_LINK_TYPE_UPROBE_MULTI
+	NetfilterType     = sys.BPF_LINK_TYPE_NETFILTER
+	NetkitType        = sys.BPF_LINK_TYPE_NETKIT
 )
 
 var haveProgAttach = internal.NewFeatureTest("BPF_PROG_ATTACH", "4.10", func() error {
@@ -127,18 +130,67 @@ var haveProgQuery = internal.NewFeatureTest("BPF_PROG_QUERY", "4.15", func() err
 })
 
 var haveTCX = internal.NewFeatureTest("tcx", "6.6", func() error {
+	prog, err := ebpf.NewProgram(&ebpf.ProgramSpec{
+		Type:    ebpf.SchedCLS,
+		License: "MIT",
+		Instructions: asm.Instructions{
+			asm.Mov.Imm(asm.R0, 0),
+			asm.Return(),
+		},
+	})
+
+	if err != nil {
+		return internal.ErrNotSupported
+	}
+
+	defer prog.Close()
 	attr := sys.LinkCreateTcxAttr{
 		// We rely on this being checked during the syscall.
-		// With an otherwise correct payload we expect EBADF here
+		// With an otherwise correct payload we expect ENODEV here
 		// as an indication that the feature is present.
-		ProgFd:        ^uint32(0),
 		TargetIfindex: ^uint32(0),
+		ProgFd:        uint32(prog.FD()),
 		AttachType:    sys.AttachType(ebpf.AttachTCXIngress),
 	}
 
-	_, err := sys.LinkCreateTcx(&attr)
+	_, err = sys.LinkCreateTcx(&attr)
 
-	if errors.Is(err, unix.EBADF) {
+	if errors.Is(err, unix.ENODEV) {
+		return nil
+	}
+	if err != nil {
+		return ErrNotSupported
+	}
+	return errors.New("syscall succeeded unexpectedly")
+})
+
+var haveNetkit = internal.NewFeatureTest("netkit", "6.7", func() error {
+	prog, err := ebpf.NewProgram(&ebpf.ProgramSpec{
+		Type:    ebpf.SchedCLS,
+		License: "MIT",
+		Instructions: asm.Instructions{
+			asm.Mov.Imm(asm.R0, 0),
+			asm.Return(),
+		},
+	})
+
+	if err != nil {
+		return internal.ErrNotSupported
+	}
+
+	defer prog.Close()
+	attr := sys.LinkCreateNetkitAttr{
+		// We rely on this being checked during the syscall.
+		// With an otherwise correct payload we expect ENODEV here
+		// as an indication that the feature is present.
+		TargetIfindex: ^uint32(0),
+		ProgFd:        uint32(prog.FD()),
+		AttachType:    sys.AttachType(ebpf.AttachNetkitPrimary),
+	}
+
+	_, err = sys.LinkCreateNetkit(&attr)
+
+	if errors.Is(err, unix.ENODEV) {
 		return nil
 	}
 	if err != nil {
